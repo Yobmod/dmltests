@@ -1,0 +1,9 @@
+{"compile":[
+["c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\hello.c", "C:\\nim17\\nim-0.17.2\\dist\\mingw64\\bin\\gcc.exe -c  -w -mno-ms-bitfields  -IC:\\nim17\\nim-0.17.2\\lib -o c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\hello.o c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\hello.c"],
+],
+"link":[
+"c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\hello.o",
+"c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\stdlib_system.o"
+],
+"linkcmd": "C:\\nim17\\nim-0.17.2\\dist\\mingw64\\bin\\gcc.exe   -o c:\\Webdev\\dmltests\\nim\\brainfuck\\hello.exe  c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\hello.o c:\\Webdev\\dmltests\\nim\\brainfuck\\nimcache\\stdlib_system.o    "
+}
