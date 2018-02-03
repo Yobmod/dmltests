@@ -42,9 +42,9 @@ def get_fixed_list(data_list: List[Any]) -> List[Any]:
 			else:
 				column_names.append('V' + str(x))
 		data.columns = column_names[:num_cols]
-		#data.columns = ['V1', 'A1', 'V2', 'A2', 'V3', 'A3']
+		# data.columns = ['V1', 'A1', 'V2', 'A2', 'V3', 'A3']
 		if isinstance(data.at[0, 'V1'], str):
-			#print(data.at[0,'V1'])
+			# print(data.at[0,'V1'])
 			data[0:] = data[0:].shift(-1)
 			data = data.drop(data.tail(1).index, inplace=True)
 
@@ -56,13 +56,13 @@ def get_fixed_list(data_list: List[Any]) -> List[Any]:
 			elif 'A' in name:
 				amps = np.concatenate((amps, np.array(data[name])))
 
-#		volts = pd.Series()
-#		amps = pd.Series()
-#		for name in column_names:
-#			if 'V' in name:
-#					volts = volts.append(data[name], ignore_index=True)
-#			elif 'A' in name:
-#					amps = amps.append(data[name], ignore_index=True)
+# 		volts = pd.Series()
+# 		amps = pd.Series()
+# 		for name in column_names:
+# 			if 'V' in name:
+# 					volts = volts.append(data[name], ignore_index=True)
+# 			elif 'A' in name:
+# 					amps = amps.append(data[name], ignore_index=True)
 		d = {'V': volts, 'A': amps, }
 		fixed_list.append(pd.DataFrame(data=d))
 	return fixed_list
@@ -90,7 +90,7 @@ def get_combined_data_columns(file_list: List[str]) -> List[str]:
 			scan_list[-3] = '0'
 		scan = ''.join(scan_list)
 		combined_data_columns.append("scan_" + scan)
-	#print(combined_data_columns)
+	# print(combined_data_columns)
 	return combined_data_columns
 
 
@@ -99,7 +99,7 @@ def print_combined_data(combined_data: Any, combined_data_columns: List[str]) ->
 		dataout = csv.writer(csvfile, delimiter='\t')
 		dataout.writerow(combined_data_columns)
 		for index, row in combined_data.iterrows():
-			#print(row)
+			# print(row)
 			dataout.writerow((row))
 		print("Output.tsv file updated")
 
@@ -112,11 +112,11 @@ def mung() -> None:
 	combined_data_columns = get_combined_data_columns(file_list)
 	print_combined_data(combined_data, combined_data_columns)
 
-	#reveal_type(file_list)
-	#reveal_type(data_list)
-	#reveal_type(fixed_list)
-	#reveal_type(combined_data)
-	#reveal_type(combined_data_columns)
+	# reveal_type(file_list)
+	# reveal_type(data_list)
+	# reveal_type(fixed_list)
+	# reveal_type(combined_data)
+	# reveal_type(combined_data_columns)
 
 
 if __name__ == "__main__":

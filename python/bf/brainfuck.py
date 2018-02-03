@@ -1,26 +1,18 @@
-#from typing import Optional
+# from typing import Optional
 
 
-def bf(
-		src: str,
-		data: str="",
-		left: int=0,
-		right: int=0,
-		idx: int=0,
-		strict: bool=True,
-			) -> None:
+def bf(src: str, data: str="", left: int=0, right: int=0,
+							idx: int=0, strict: bool=True) -> str:
 	""" brainfuck interpreter
-		src: source string
-		left: start index, right: ending index
+		src: source string, left: start index, right: ending index
 		data: input data string, idx: start-index of input data string
 	"""
-
 	if left < 0 or left >= len(src):
 		left = 0
 	if right <= 0 or right >= len(src):
 		right = len(src) - 1
-
-	arr = [0] * 30000 # turing machine has infinite array size, increase or decrease here
+	output = []
+	arr = [0] * 30000  # turing machine has infinite array size, increase or decrease here
 	ptr = 0
 	i = left
 	while i <= right:
@@ -38,7 +30,9 @@ def bf(
 		elif s == '-':
 			arr[ptr] -= 1
 		elif s == '.':
-			print(chr(arr[ptr]), end="")
+			output_char = chr(arr[ptr])
+			#print(output_char, end="")
+			output.append(output_char)
 		elif s == ',':	 # read from data
 			if isinstance(data, str):
 				if (0 <= idx < len(data)):
@@ -46,7 +40,7 @@ def bf(
 					idx += 1
 				elif data == "" or idx > len(data):
 					arr[ptr] = 0  # out of input
-					#print("out of data")
+					# print("out of data")
 			else:
 				raise TypeError("optional data must be a string or empty")
 		elif s == '[':
@@ -73,7 +67,7 @@ def bf(
 			pass
 		i += 1
 
-	#import re
+	# import re
 	# match = re.match("^[><+-., \[\]]*$", src)
 	# if strict and not match:
 	# 	print("\n" + "none bf detected")
@@ -83,8 +77,14 @@ def bf(
 	if not src or len(src) == 0:
 		print("\n" + "no BF input detected")
 
+	outputstr = "".join(output)
+	# outputstr = outputstr.encode('UTF-8')
+	# outputstr = outputstr.decode('unicode_escape')
+	# print("\n" + outputstr)
+	return output
+
 
 if __name__ == "__main__":
 	src = input()
-	#bf(src, left=0, right=len(src) - 1, data="stringo", idx=0)
+	# bf(src, left=0, right=len(src) - 1, data="stringo", idx=0)
 	bf(src, data="stringo")
