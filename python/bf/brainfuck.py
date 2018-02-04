@@ -31,7 +31,7 @@ def bf(src: str, data: str="", left: int=0, right: int=0,
 			arr[ptr] -= 1
 		elif s == '.':
 			output_char = chr(arr[ptr])
-			#print(output_char, end="")
+			# print(output_char, end="")
 			output.append(output_char)
 		elif s == ',':	 # read from data
 			if isinstance(data, str):
@@ -77,14 +77,13 @@ def bf(src: str, data: str="", left: int=0, right: int=0,
 	if not src or len(src) == 0:
 		print("\n" + "no BF input detected")
 
-	outputstr = "".join(output)
-	# outputstr = outputstr.encode('UTF-8')
-	# outputstr = outputstr.decode('unicode_escape')
+	outputstr = " ".join(str(ord(x)) for x in output)
+	# print("\n" + output)
 	# print("\n" + outputstr)
-	return output
+	return outputstr
 
 
 if __name__ == "__main__":
 	src = input()
-	# bf(src, left=0, right=len(src) - 1, data="stringo", idx=0)
+	# bf(src, left=0, right=len(src) - 1, data="stringo", idx=0, strict=True)
 	bf(src, data="stringo")
