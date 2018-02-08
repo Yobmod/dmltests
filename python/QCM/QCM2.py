@@ -33,23 +33,33 @@ def wlinear_fit(
     return a, b, cov_00, cov_11, cov_01, chi2
 
 
-BET_x = (0.1, 0.2, 0.3, 0.4)     # P/P0 (water)
-BET_y = (40, 80, 100, 130)          # P/V(P0-P)
-err_x = (0.01, 0.04, 0.02, 0.05)
+
+BET_y = (  -4.2,     -4.1,   -3.8,   -3.62,  -3.6,   -3.6)        # P/P0 (water)
+BET_x = (  -2.7,     -2.52,  -2.4,   -2.3,   -2.22,  -2.15)          # P/V(P0-P)
+err_y = (   0.21,     0.18,   0.17,   0.05,     0.05, 0.04)
 # err_y = (2.0, 2.0, 2.0, 2.0)
 # total_error = np.multiply(err_x, err_y)
-error_weights = tuple(1.0 / (np.array(err_x) ** 2.0))
 
 
+error_weights = tuple(1.0 / (np.array(err_y) ** 2.0))
 intercept, slope, cov_00, cov_11, cov_01, chi2 = wlinear_fit(BET_x, BET_y, error_weights)
-
 interc_err = cov_00 ** 0.5
 slope_err = (cov_11 ** 0.5)
-
 print(slope, intercept, slope_err, interc_err)
 
 
-mod_wls = sm.WLS(BET_y, BET_x, weights=1.0 / np.array(err_x))
+
+BET_x = sm.add_constant(BET_x)
+mod_wls = sm.WLS(BET_y, BET_x, weights=(1.0 / np.array(err_y)), has_constant='intercept')
 res_wls = mod_wls.fit()
 print(res_wls.summary2())
 # print(dir(res_wls))
+print('Parameters (m, m_err, c, c_err, R2): ', res_wls.params[1], res_wls.bse[1], res_wls.params[0], res_wls.bse[0], res_wls.rsquared)
+
+
+mod_ols = sm.OLS(BET_y, BET_x, weights=1.0 / np.array(err_y))
+res_ols = mod_ols.fit()
+print(res_ols.summary2())
+print('Parameters: ', res_ols.params)
+print('R2: ', res_ols.rsquared)
+#print('Predicted values: ', res_ols.predict())  #predicted values to plot trendline manually
