@@ -1,7 +1,7 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import Tk, Toplevel, Label, RIGHT, BOTH, RAISED
+import tkinter
 from tkinter.ttk import Frame, Style
 
 
@@ -25,14 +25,14 @@ class Example(Frame):
         #self.style.theme_use("default")
         #Style().configure("TFrame", background="#333")
 
-        frame = Frame(self, relief=RAISED, borderwidth=1)
-        frame.pack(fill=BOTH, expand=True)
+        frame = Frame(self, relief=tkinter.RAISED, borderwidth=1)
+        frame.pack(fill=tkinter.BOTH, expand=True)
 
-        self.pack(fill=BOTH, expand=True)
+        self.pack(fill=tkinter.BOTH, expand=True)
 
         minc = Image.open("tulips.jpg")
         mincol = ImageTk.PhotoImage(minc)
-        label3 = Label(self, image=mincol)
+        label3 = tkinter.Label(self, image=mincol)
         label3.image = mincol
         label3.place(x=170, y=50)
 

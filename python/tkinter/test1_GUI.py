@@ -3,22 +3,20 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import Tk, Toplevel, Label, RIGHT, BOTH, RAISED
-from tkinter.ttk import Frame, Style
 
 
-class Example(Frame):
+class Example(ttk.Frame):
 
-	def __init__(self, parent: Tk) -> None:
-		Frame.__init__(self, parent)
+	def __init__(self, parent: tk.Tk) -> None:
+		ttk.Frame.__init__(self, parent)
 		self.parent = parent
-		self.initUI()
+		self.initui()
 
-	def initUI(self) -> None:
+	def initui(self) -> None:
 		self.parent.title("Absolute positioning")
-		self.pack(fill=BOTH, expand=1)
-		Style().configure("TFrame", background="#333")
-		#ttk.Style().configure("TLabel", borderwidth=10)
+		self.pack(fill=tk.BOTH, expand=1)
+		ttk.Style().configure("TFrame", background="#333")
+		# ttk.Style().configure("TLabel", borderwidth=10)
 
 		bard = Image.open("lighthouse.jpg")
 		bardejov = ImageTk.PhotoImage(bard)
@@ -28,22 +26,22 @@ class Example(Frame):
 
 		rot = Image.open("Penguins.jpg")
 		rotunda = ImageTk.PhotoImage(rot)
-		label2 = ttk.Label(self, image=rotunda)  #, style="TLabel")
+		label2 = ttk.Label(self, image=rotunda)  # , style="TLabel")
 		label2.image = rotunda
 		label2.place(x=40, y=160)
 
 		minc = Image.open("Tulips.jpg")
 		mincol = ImageTk.PhotoImage(minc)
-		label3 = Label(self, image=mincol)
+		label3 = tk.Label(self, image=mincol)
 		label3.image = mincol
 		label3.place(x=170, y=50)
 
 
 def main(width: int=600, height: int=500) -> None:
 	size = str(width) + "x" + str(height)
-	root = Tk()
+	root = tk.Tk()
 	root.geometry(size)  # widthxheight
-	app = Example(root)
+	# app = Example(root)
 	root.mainloop()
 
 
