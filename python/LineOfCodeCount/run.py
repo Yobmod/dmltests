@@ -1,8 +1,8 @@
 import time
-start = time.time()
-import LOC_count
 import os
+import LOC_count
 
+start = time.time()
 
 if __name__ == "__main__": 		# pragma: no cover
 	fold_dir = os.getcwd()

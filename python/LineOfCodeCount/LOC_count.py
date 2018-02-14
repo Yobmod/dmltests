@@ -1,5 +1,5 @@
 import os
-from typing import List, Dict, Optional, Tuple, Union  # , Any, NewType, get_type_hints
+from typing import List, Dict, Optional, Tuple, Union, Sequence  # , Any, NewType, get_type_hints
 
 
 def countlines(
@@ -119,7 +119,7 @@ def ext_tuple(file_type: Union[str, Tuple[str, ...]]) -> Tuple[str, ...]:
 	return ext_tup
 
 
-def exclude_list(black_list: Union[str, List[str]]="") -> List[str]:
+def exclude_list(black_list: Union[str, Sequence[str]]="") -> List[str]:
 	exc_list: List[str] = ["vendor", "dist", "build", "htmlcov", ]
 	if black_list:
 		if isinstance(black_list, list):

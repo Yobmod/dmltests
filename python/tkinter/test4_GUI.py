@@ -3,10 +3,10 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory, askopenfilename
 # from tkinter.ttk import Frame, Button, Label
 
-from typing import Any, Optional  #, NewType, Union, TypeVar
+from typing import Any, Optional, NewType, Union, TypeVar
 
-#FileType = NewType('FileType', str)
-FileType = str
+FileType = NewType('FileType', str)
+# FileType = str
 PathType = str
 
 
@@ -17,12 +17,12 @@ class Example(ttk.Frame):
 		self.master = master
 		# master.geometry('400x400')
 		# master.title("DML dggffg")
-#		self.columnconfigure(0, weight=1, uniform=1, pad=1)
-#		self.columnconfigure(1, weight=1, uniform=1, pad=1)
-#		self.columnconfigure(2, weight=1, uniform=1, pad=1)
-#		self.columnconfigure(3, weight=1, uniform=1, pad=1)
-#		self.rowconfigure(1, weight=1, pad=7)
-#		self.rowconfigure(2, pad=7)
+		# self.columnconfigure(0, weight=1, uniform=1, pad=1)
+		# self.columnconfigure(1, weight=1, uniform=1, pad=1)
+		# self.columnconfigure(2, weight=1, uniform=1, pad=1)
+		# self.columnconfigure(3, weight=1, uniform=1, pad=1)
+		# self.rowconfigure(1, weight=1, pad=7)
+		# self.rowconfigure(2, pad=7)
 		self.create_row0()
 		self.create_row1()
 		self.create_row2()

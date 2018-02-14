@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import BOTH, W, N, E, S#, Tk, Toplevel, Text,
-#from tkinter.ttk import Frame, Button, Label, Style
+from tkinter import BOTH, W, N, E, S  # , Tk, Toplevel, Text,
+# from tkinter.ttk import Frame, Button, Label, Style
 
 
 class Example(ttk.Frame):
@@ -51,7 +51,7 @@ class Example(ttk.Frame):
 
 		def close_help() -> None:
 			help.destroy()
-		Button_C = ttk.Button(help, text="Close", command=close_help) #tk.Button, bg="color"
+		Button_C = ttk.Button(help, text="Close", command=close_help)  # tk.Button, bg="color"
 		Button_C.pack(pady=10, ipadx=20)
 
 	def go_bttn(self) -> None:
@@ -65,12 +65,12 @@ class HelpWindow(ttk.Frame):
 	def __init__(self, parent: tk.Tk) -> None:
 		ttk.Frame.__init__(self, parent)
 		self.parent = parent
-		#self.initUI()
+		# self.initUI()
 
 
 def main() -> None:
 	root = tk.Tk()
-	root.geometry("350x300+300+300")
+	root.geometry("350x300")
 	Example(root)
 	root.mainloop()
 

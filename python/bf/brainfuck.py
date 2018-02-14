@@ -30,10 +30,10 @@ def bf(src: str, data: str="", left: int=0, right: int=0,
 		elif s == '-':
 			arr[ptr] -= 1
 		elif s == '.':
-			#print(arr[ptr])
+			# print(arr[ptr])
 			output_char = chr(arr[ptr])
-			#print(output_char, end="")
-			#print(repr(output_char))
+			# print(output_char, end="")
+			# print(repr(output_char))
 			if r"\x" in repr(output_char):
 				output_char = str(ord(output_char))
 			output.append(output_char)
@@ -82,7 +82,7 @@ def bf(src: str, data: str="", left: int=0, right: int=0,
 		print("\n" + "no BF input detected")
 
 	outputstr = " ".join(output)
-	#outputnums = " ".join(str(ord(x)) for x in output)
+	# outputnums = " ".join(str(ord(x)) for x in output)
 	print(output)    			# list of chars
 	# print("\n" + outputstr)	# string of numbers
 	return outputstr

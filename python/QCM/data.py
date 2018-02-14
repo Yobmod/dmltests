@@ -15,7 +15,7 @@ outputlist = []
 
 try:
     line = f.readline(55)
-#print(line)
+# print(line)
     text = line.decode("ISO 8859-1 ")
     print(text)
 except:

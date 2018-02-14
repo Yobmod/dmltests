@@ -1,13 +1,14 @@
 import numpy as np                        # type: ignore
 import matplotlib.pyplot as plt            # type: ignore
 from scipy.stats import linregress        # type: ignore
-from typing import List, Tuple, Union, NoReturn, Optional, Any
+from typing import List, Tuple, Union, NoReturn, Optional, Any, Set
+# from math import sqrt
 
 # types
 TupFlType = Tuple[float, ...]
 OptTupFlType = Optional[TupFlType]
 NumType = Union[int, float]
-IterNumType = Union[List[NumType], Tuple[NumType, ...]]
+IterNumType = Union[List[NumType], Tuple[NumType, ...], Set[NumType]]
 
 # constants
 
@@ -53,6 +54,7 @@ def plot_BET(BET_x: TupFlType, BET_y: TupFlType,
     BET_line_eqn = "y=%.6fx+(%.6f)" % (linfit[0], linfit[1])
     print("BET line : " + BET_line_eqn)
 
+
 plot_BET(BET_x, BET_y)
 
 minmin = linregress(min_x, min_y)
@@ -72,50 +74,49 @@ ave_interc = (minmin[1] + minmax[1] + maxmin[1] + maxmax[1]) / 4
 BET_ave_eqn = "y=%.6fx+(%.6f)" % (ave_slope, ave_interc)
 print("BET ave : " + BET_ave_eqn)
 
-m, c = np.polyfit(BET_x, BET_y, 1, w = [1.0 / ty for ty in total_error])
+m, c = np.polyfit(BET_x, BET_y, 1, w=[1.0 / ty for ty in total_error])
 
 BET_weighted = "y=%.6fx+(%.6f)" % (m, c)
 print("BET weight : " + BET_weighted)
 
-from math import sqrt
 
-#BET_x = np.array(BET_x)
-#slope, intercept, r, prob2, see = linregress(BET_x, BET_y)
-#mx = BET_x.mean()
-#sx2 = ((BET_x-mx)**2).sum()
-#chi2 = see / (sqrt(1.0 / sx2))
-#interc_err = chi2  * sqrt((1./len(BET_x)) + mx*mx/sx2)
-#print(see, interc_err)
+# BET_x = np.array(BET_x)
+# slope, intercept, r, prob2, see = linregress(BET_x, BET_y)
+# mx = BET_x.mean()
+# sx2 = ((BET_x-mx)**2).sum()
+# chi2 = see / (sqrt(1.0 / sx2))
+# interc_err = chi2  * sqrt((1./len(BET_x)) + mx*mx/sx2)
+# print(see, interc_err)
 
 
-x_data = []           
+x_data: List[IterNumType] = []
 for i in range(4):
-    d_d = [] 
+    d_d: List[NumType] = []
     d_d.append(BET_x[i])
     d_d.append(min_x[i])
     d_d.append(max_x[i])
     x_data.append(d_d)  # x_data = list ofx1, x2, x3....
 
-y_data = []           
+y_data: List[IterNumType] = []
 for i in range(4):
-    d_d = [] 
-    d_d.append(BET_y[i])
-    d_d.append(min_y[i])
-    d_d.append(max_y[i])
-    y_data.append(d_d)  # x_data = list ofx1, x2, x3....
-    
+    e_e: List[NumType] = []
+    e_e.append(BET_y[i])
+    e_e.append(min_y[i])
+    e_e.append(max_y[i])
+    y_data.append(e_e)  # x_data = list ofx1, x2, x3....
 
-x_comb = [(a,b,c,d) for a in x_data[0] for b in x_data[1] for c in x_data[2] for d in x_data[3]]
-y_comb = [(a,b,c,d) for a in y_data[0] for b in y_data[1] for c in y_data[2] for d in y_data[3]]
-#print(y_comb)
-  
-grads = []; sum_grads = 0
-intercepts = []; sum_intercepts = 0
-std_errs = []; sum_std_errs = 0
+
+x_comb = [(a, b, c, d) for a in x_data[0] for b in x_data[1] for c in x_data[2] for d in x_data[3]]
+y_comb = [(a, b, c, d) for a in y_data[0] for b in y_data[1] for c in y_data[2] for d in y_data[3]]
+# print(y_comb)
+
+grads, sum_grads = [], 0
+intercepts, sum_intercepts = [], 0
+std_errs, sum_std_errs = [], 0
 for x in x_comb:
     for y in y_comb:
         lininfo = linregress(x, y)
-        #plt.plot(x, y, 'g')
+        # plt.plot(x, y, 'g')
         grads.append(lininfo[0])
         sum_grads += lininfo[0]
         intercepts.append(lininfo[1])
@@ -127,5 +128,5 @@ ave_grads = sum_grads / len(grads)
 ave_intercepts = sum_intercepts / len(intercepts)
 ave_std_errs = sum_std_errs / len(std_errs)
 BET_total_ave = "y=%.6fx+(%.6f)" % (ave_grads, ave_intercepts)
-print("BET total ave : " + BET_total_ave, ave_std_errs) 
-print(len(grads) ** (1/4))
+print("BET total ave : " + BET_total_ave, ave_std_errs)
+print(len(grads) ** (1 / 4))

@@ -36,8 +36,8 @@ def close_all() -> None:
 
 def go() -> None:
     print("this will run the pragramme eventually...")
-    #from dmlQCM import P
-    #P()
+    # from dmlQCM import P
+    # P()
 
 
 # label and give jobs to the buttons. Pack/grid/place to place them

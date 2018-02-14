@@ -116,7 +116,7 @@ class TypeLines():
 			raise TypeError("filetype must be a string or tuple of strings")
 		return self.ext_tup
 
-	def exclude_list(self, black_list: Union[str, List[str]]=None) -> List[str]:
+	def exclude_list(self, black_list: Union[str, List[str], None]=None) -> List[str]:
 		if black_list:
 			if isinstance(black_list, list):
 				self.exc_list += black_list
@@ -129,7 +129,7 @@ class TypeLines():
 	def typeLines(
 		self, fold_dir: str,
 		file_type: Union[str, Tuple[str, ...]],
-		black_list: Union[str, List[str]]=None) -> int:
+		black_list: Union[str, List[str], None]=None) -> int:
 		"""Takes fold_dir as abs or rel path string. Takes filetype as string or
 		tuple, converted by ext_tuple() to file extensions, then LOC counted in matching
 		files in fold_dir and subfolders. Excluded subfolders in from exclude_list()"""
