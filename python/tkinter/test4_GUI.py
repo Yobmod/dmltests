@@ -3,7 +3,11 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory, askopenfilename
 # from tkinter.ttk import Frame, Button, Label
 
-from typing import Any, Optional  # , Union, TypeVar
+from typing import Any, Optional  #, NewType, Union, TypeVar
+
+#FileType = NewType('FileType', str)
+FileType = str
+PathType = str
 
 
 class Example(ttk.Frame):
@@ -60,13 +64,13 @@ class Example(ttk.Frame):
 		Button_go = ttk.Button(self.master, text="Go", command=self.go)
 		Button_go.grid(column=5, row=4)
 
-	def get_datapath(self) -> None:
-		data_dir = askdirectory()
+	def get_datapath(self) -> str:
+		data_dir: PathType = askdirectory()
 		print(data_dir)
 		return data_dir
 
-	def get_datafile(self) -> None:
-		data_file = askopenfilename()
+	def get_datafile(self) -> str:
+		data_file: FileType = askopenfilename()
 		print(data_file)
 		return data_file
 
@@ -91,9 +95,10 @@ class Example(ttk.Frame):
 		print("this will run the programme eventually...")
 
 
-def main() -> None:
+def main(width: int=500, height: int=500) -> None:
+	size = str(width) + "x" + str(height)
 	root = tk.Tk()
-	root.geometry('450x450')
+	root.geometry(size)
 	root.title("DML dggffg")
 	root.iconbitmap('favicon.ico')
 	app = Example(root)
