@@ -110,31 +110,31 @@ def ext_tuple(file_type: Union[str, Tuple[str, ...]]) -> Tuple[str, ...]:
 			ext_tup = file_type_dict[file_type]
 		else:
 			raise ValueError("filetype should be in form '.xyz' or 'python', 'javascript', 'c' ")
-	elif isinstance(file_type, tuple):
+	elif isinstance(file_type, (tuple, list, set)):
 		for x in file_type:
 			each_tup: Tuple[str, ...] = ext_tuple(x)
 			ext_tup = ext_tup + each_tup
 	else:
-		raise TypeError("filetype must be a string or tuple of strings")
+		raise TypeError("filetype must be a string or sequence of strings")
 	return ext_tup
 
 
 def exclude_list(black_list: Union[str, Sequence[str]]="") -> List[str]:
 	exc_list: List[str] = ["vendor", "dist", "build", "htmlcov", ]
 	if black_list:
-		if isinstance(black_list, list):
+		if isinstance(black_list, (list, tuple, set)):
 			exc_list += black_list
 		elif isinstance(black_list, str):
 			exc_list.append(black_list)
 		else:
-			raise TypeError("Excluded subfolders should be list of strings")
+			raise TypeError("Excluded subfolders should be sequence of strings")
 	return exc_list
 
 
 def typeLines(
 	fold_dir: str,
 	file_type: Union[str, Tuple[str, ...]],
-	black_list: Union[str, List[str]]="") -> int:
+	black_list: Union[str, Sequence[str]]="") -> int:
 	"""Takes fold_dir as abs or rel path string. Takes filetype as string or
 	tuple, converted by ext_tuple() to file extensions, then LOC counted in matching
 	files in fold_dir and subfolders. Excluded subfolders in from exclude_list()"""
@@ -158,7 +158,7 @@ def typeLines(
 
 def typeLines_print(
 	fold_dir: str,
-	black_list: Union[str, List[str]]=["tests", "mock"]) -> Dict[str, int]:
+	black_list: Union[str, Sequence[str]]=["tests", "mock"]) -> Dict[str, int]:
 	# pyLOC = pyLines(fold_dir)
 	# jsLOC = jsLines(fold_dir)
 	# cLOC = cLines(fold_dir)
