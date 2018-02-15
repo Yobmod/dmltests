@@ -1,6 +1,6 @@
 import os
 import pytest			# type: ignore
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Sequence, Set
 from .. import LOC_count
 # import unittest
 # import sys
@@ -53,8 +53,8 @@ class TestTypeLines():
 	fold_dirs = [os.getcwd(), "./", ".", ("."), ]
 	fail_dirs = [5, 1001, ["."], (".", ), {".": "str"}, "./not_exist", ]
 
-	fail_types = [5, 1001, "str", None, {"str": 5}, ["jkld", 7], ]
-	fail_tups = [(4, 2000), (5, "wrg"), ("djkl", "jlk"), ]
+	fail_types = [5, 1001, "str", None, {5, 8}, {"str": 5, }, [5, 4, "str"], ]
+	fail_tups: List[Union[Sequence[Union[str, int]], Set[str]]] = [(4, 2000), (5, "wrg"), ("djkl", "jlk"), ["djkl", "jlk"], {"djkl", "jlk"}, ]
 	succ_types: List[Union[str, Tuple[str, ...]]] = [
 		"python", "javascript", "c", "ts", "cy", ("js", "py", "C"),
 		".py", ".txt", ".INI", (".js", ".md")
@@ -80,7 +80,7 @@ class TestTypeLines():
 
 	def test_ext_tuple_input_type(self) -> None:
 			for fail_type in self.fail_types:
-				if isinstance(fail_type, str):
+				if isinstance(fail_type, (str, set, list)) and all(isinstance(x, str) for x in fail_type):
 					with pytest.raises(ValueError):
 						LOC_count.ext_tuple(fail_type)
 				else:
@@ -98,12 +98,12 @@ class TestTypeLines():
 
 	def test_exclude_list(self) -> None:
 		for black_list in self.black_list_types:
-			if isinstance(black_list, (str, list, tuple)) and len(black_list) > 0:
+			if isinstance(black_list, (str, list, tuple, set)) and len(black_list) > 0:
 				x = LOC_count.exclude_list(black_list)
-				assert isinstance(x, str) and len(x) > 0
+				assert isinstance(x, list) and len(x) > 0   # TODO: change to len > exc_list
 			elif black_list is None or black_list == "":
-				with pytest.raises(ValueError):
-					x = LOC_count.exclude_list(black_list)	 # type: ignore
+				x = LOC_count.exclude_list(black_list)	 # type: ignore
+				assert isinstance(x, list) and len(x) > 0   # TODO: change to len == exc_list
 			else:
 				with pytest.raises(TypeError):
 					x = LOC_count.exclude_list(black_list)	 # type: ignore

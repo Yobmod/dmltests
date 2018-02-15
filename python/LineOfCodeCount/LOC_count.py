@@ -1,5 +1,6 @@
 import os
-from typing import List, Dict, Optional, Tuple, Union, Sequence  # , Any, NewType, get_type_hints
+from typing import List, Dict, Optional, Tuple, Union, Sequence, Set
+# , Any, Iterable, NewType, get_type_hints
 
 
 def countlines(
@@ -86,7 +87,10 @@ def cLines(directory: str) -> int:
 	return c_lines
 
 
-def ext_tuple(file_type: Union[str, Tuple[str, ...]]) -> Tuple[str, ...]:
+SeqStr = Union[Sequence[str], Set[str]]
+
+
+def ext_tuple(file_type: SeqStr) -> Tuple[str, ...]:
 	"""Takes filetype(s) as string or tuple. Filetype should be '.xyz'
 	or name of language. Outputs tuple of file extentions"""
 	ext_tup: Tuple[str, ...] = ()
@@ -119,7 +123,7 @@ def ext_tuple(file_type: Union[str, Tuple[str, ...]]) -> Tuple[str, ...]:
 	return ext_tup
 
 
-def exclude_list(black_list: Union[str, Sequence[str]]="") -> List[str]:
+def exclude_list(black_list: SeqStr="") -> List[str]:
 	exc_list: List[str] = ["vendor", "dist", "build", "htmlcov", ]
 	if black_list:
 		if isinstance(black_list, (list, tuple, set)):
@@ -133,8 +137,8 @@ def exclude_list(black_list: Union[str, Sequence[str]]="") -> List[str]:
 
 def typeLines(
 	fold_dir: str,
-	file_type: Union[str, Tuple[str, ...]],
-	black_list: Union[str, Sequence[str]]="") -> int:
+	file_type: SeqStr,
+	black_list: SeqStr="") -> int:
 	"""Takes fold_dir as abs or rel path string. Takes filetype as string or
 	tuple, converted by ext_tuple() to file extensions, then LOC counted in matching
 	files in fold_dir and subfolders. Excluded subfolders in from exclude_list()"""
@@ -158,7 +162,7 @@ def typeLines(
 
 def typeLines_print(
 	fold_dir: str,
-	black_list: Union[str, Sequence[str]]=["tests", "mock"]) -> Dict[str, int]:
+	black_list: SeqStr=["tests", "mock"]) -> Dict[str, int]:
 	# pyLOC = pyLines(fold_dir)
 	# jsLOC = jsLines(fold_dir)
 	# cLOC = cLines(fold_dir)
