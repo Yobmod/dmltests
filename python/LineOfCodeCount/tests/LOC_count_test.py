@@ -50,7 +50,7 @@ class TestPyJsCLines():
 
 
 class TestTypeLines():
-	fold_dirs = [os.getcwd(), "./", ".", ("."), ]
+	fold_dirs = [os.getcwd(), "./", ".", ("."), ]  # give one folder
 	fail_dirs = [5, 1001, ["."], (".", ), {".": "str"}, "./not_exist", ]
 
 	fail_types = [5, 1001, "str", None, {5, 8}, {"str": 5, }, [5, 4, "str"], ]
