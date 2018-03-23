@@ -1,11 +1,10 @@
 #include <stdio.h> //printf, scanf
-//#include <stdbool.h>
+#include <stdbool.h>
 #include <string.h> //strlen
 
-//#include <math.h>
+#include <math.h>
 #include <stdlib.h> //malloc
 #include <ctype.h> //toupper, tolower, isalpha, isupper...
-
 
 
 int main(void){
