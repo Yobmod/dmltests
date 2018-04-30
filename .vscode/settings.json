@@ -1,5 +1,6 @@
 {
     "C_Cpp.intelliSenseEngineFallback": "Disabled",
     "python.linting.enabled": false,
-    "python.linting.flake8Enabled": false
+    "python.linting.flake8Enabled": false,
+    "python.pythonPath": "C:\\Anaconda3\\python.exe"
 }
