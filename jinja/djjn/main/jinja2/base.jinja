@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Webpage</title>
+
+{% stylesheet 'vendor' %}
+{% javascript 'vendor' %}
+
+    {#
+    <link rel="stylesheet" href="{{ static('main/vendor/bootstrap.min.css') }}"/>
+    <link rel="stylesheet" href="{{ static('main/vendor/font-awesome.min.css') }}"/>
+    <script type="text/javascript" src="{{ static('main/vendor/jquery-3.2.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static('main/vendor/bootstrap.min.js') }}"></script>
+    #}
+    {% block head_extra %} {% endblock head_extra %}
+</head>
+
+<body>
+    <h1>My Webpage</h1>
+    {% block content %} {% endblock content %}
+</body>
+</html>
+
+

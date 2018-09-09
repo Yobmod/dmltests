@@ -139,7 +139,7 @@ class TypeLines():
 		for thing in os.listdir(fold_dir):
 			thing = os.path.join(fold_dir, thing)
 			if os.path.isfile(thing) and thing.endswith(self.ext_tup):
-				with open(thing, 'r') as f:
+				with open(thing, 'rb') as f:
 					newlines = f.readlines()
 					lines += len(newlines)
 			elif os.path.isdir(thing) and not any(x in thing for x in self.exc_list):
