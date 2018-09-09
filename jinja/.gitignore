@@ -5,7 +5,7 @@ myvenv
 
 local_settings.py
 .cache/
-.mypy_cache/
+*.mypy_cache/
 .pytest_cache/
 
 
