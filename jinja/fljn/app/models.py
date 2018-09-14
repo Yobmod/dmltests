@@ -6,11 +6,6 @@ from app import db
 from app import login
 
 
-@login.user_loader
-def load_user(id: str) -> User:
-    user_from_id: User = User.query.get(int(id))
-    return user_from_id
-
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
@@ -30,6 +25,12 @@ class User(UserMixin, db.Model):
     def check_password(self, password: str) -> bool:
         password_hash_match: bool = check_password_hash(self.password_hash, password)
         return password_hash_match
+
+
+@login.user_loader
+def load_user(id: str) -> User:
+    user_from_id: User = User.query.get(int(id))
+    return user_from_id
 
 
 class Post(db.Model):
