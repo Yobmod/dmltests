@@ -6,8 +6,7 @@ from app import db
 from app import login
 
 
-
-class User(UserMixin, db.Model):
+class User(UserMixin, db.Model):        # type: ignore
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -33,7 +32,7 @@ def load_user(id: str) -> User:
     return user_from_id
 
 
-class Post(db.Model):
+class Post(db.Model):       # type: ignore
     __tablename__ = 'post'
 
     id = db.Column(db.Integer, primary_key=True)

@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-
 python-dotenv = "*"
 Flask = "*"
 Flask-Migrate = "*"
@@ -13,7 +12,8 @@ Flask-WTF = "*"
 Jinja2 = "*"
 SQLAlchemy = "*"
 Werkzeug = "*"
-
+flask-login = "*"
+flask-admin = "*"
 
 [dev-packages]
 autopep8 = "==1.4"
