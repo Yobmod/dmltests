@@ -34,7 +34,7 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
 
-    def __init__(self, original_username: User.username, *args, **kwargs) -> None:
+    def __init__(self, original_username: User.username, *args: tuple, **kwargs: dict) -> None:
         super(EditProfileForm, self).__init__(*args, **kwargs)
         self.original_username = original_username
 

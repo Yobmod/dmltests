@@ -1,11 +1,11 @@
-from app import app, db
+from . import app, db
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime
 # from jinja2.environment import Template
-from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm
+from .models import User, Post
+from .forms import LoginForm, RegistrationForm
 
 from typing import Any, Union, cast, NewType
 
@@ -99,7 +99,7 @@ def user(username: str) -> HTML:
     return rendered
 
 
-from app.forms import EditProfileForm
+from .forms import EditProfileForm
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -119,3 +119,35 @@ def edit_profile() -> Union[httpResponse, HTML]:
 
     rendered: HTML = render_template('edit_profile.html', title='Edit Profile', form=form)
     return rendered
+
+
+@app.route('/follow/<username>')
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot follow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash('You are following {}!'.format(username))
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are not following {}.'.format(username))
+    return redirect(url_for('user', username=username))

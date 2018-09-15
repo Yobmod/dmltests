@@ -7,6 +7,8 @@ from flask_login import LoginManager
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
+from typing import Union, Tuple
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -26,9 +28,10 @@ if not app.debug:
         auth = None
         if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
             auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        secure = None
         if app.config['MAIL_USE_TLS']:
-            secure = ()
+            secure: Union[None, Tuple[str], Tuple[str, str]] = ('', )
+        else:
+            secure = None
         mail_handler = SMTPHandler(
             mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
             fromaddr='yobmod@gmail.com',   # no-reply@' + app.config['MAIL_SERVER'],
