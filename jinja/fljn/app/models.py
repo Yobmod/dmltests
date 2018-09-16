@@ -2,9 +2,22 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
+from time import time
+import jwt
 
-from . import db
+from . import db, app
 from . import login
+
+from typing import List, Optional as Opt, TypeVar
+
+UserType = TypeVar('UserType', bound='User')
+PostType = TypeVar('PostType', bound='Post')
+
+
+@login.user_loader
+def load_user(id: str) -> UserType:
+    user_from_id: UserType = User.query.get(int(id))
+    return user_from_id
 
 
 followers = db.Table('followers',
@@ -13,6 +26,7 @@ followers = db.Table('followers',
                      db.Column('followed_id', db.Integer,
                                db.ForeignKey('user.id'))
                      )
+
 
 class User(UserMixin, db.Model):        # type: ignore
     __tablename__ = 'user'
@@ -24,12 +38,12 @@ class User(UserMixin, db.Model):        # type: ignore
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    followed = db.relationship('User', 
-        secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.followed_id == id),
-        backref=db.backref('followers', lazy='dynamic'), 
-        lazy='dynamic')
+    followed = db.relationship('User',
+                               secondary=followers,
+                               primaryjoin=(followers.c.follower_id == id),
+                               secondaryjoin=(followers.c.followed_id == id),
+                               backref=db.backref('followers', lazy='dynamic'),
+                               lazy='dynamic')
 
     def __repr__(self) -> str:
         return '<User {}>'.format(self.username)
@@ -42,37 +56,48 @@ class User(UserMixin, db.Model):        # type: ignore
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
-        password_hash_match: bool = check_password_hash(self.password_hash, password)
+        password_hash_match: bool = check_password_hash(
+            self.password_hash, password)
         return password_hash_match
 
-    def follow(self, user):
+    def follow(self, user: UserType) -> None:
         if not self.is_following(user):
             self.followed.append(user)
 
-    def unfollow(self, user):
+    def unfollow(self, user: UserType) -> None:
         if self.is_following(user):
             self.followed.remove(user)
 
-    def is_following(self, user):
-        return self.followed.filter(
-            followers.c.followed_id == user.id).count() > 0
+    def is_following(self, user: UserType) -> bool:
+        is_follow: bool = (self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0)
+        return is_follow
 
-    def followed_posts(self):
-        followed = Post.query.join(
-            followers, (followers.c.followed_id == Post.user_id)).filter(
-                followers.c.follower_id == self.id)
+    def followed_posts(self) -> List[PostType]:
+        followed = Post.query.join(followers,
+                                   (followers.c.followed_id == Post.user_id)).filter(
+            followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
-        return followed.union(own).order_by(Post.timestamp.desc())
+        my_follow_posts: List[Post] = followed.union(
+            own).order_by(Post.timestamp.desc())
+        return my_follow_posts
 
+    def get_reset_password_token(self, expires_in: int = 600) -> str:
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
-@login.user_loader
-def load_user(id: str) -> User:
-    user_from_id: User = User.query.get(int(id))
-    return user_from_id
-
-
-
-
+    @staticmethod
+    def verify_reset_password_token(token: str) -> Opt[UserType]:
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'], 
+                            algorithms=['HS256'])['reset_password']
+        except Exception as e:
+            # logger(ERROR)
+            return None
+        else:
+            verified_user: UserType = User.query.get(id)
+            return verified_user
 
 
 class Post(db.Model):       # type: ignore

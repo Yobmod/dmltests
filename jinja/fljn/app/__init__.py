@@ -21,9 +21,9 @@ login.login_view = 'login'  # name of view
 mail = Mail(app)
 
 
-from app import routes, models, errors
+from app import routes, models, errors, email
 
-app.debug = app.config['FLASK_DEBUG']
+# app.debug = app.config['FLASK_DEBUG']
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
