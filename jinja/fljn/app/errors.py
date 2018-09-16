@@ -1,7 +1,7 @@
 from flask import render_template
-from app import app, db
+from . import app, db
 
-from app.routes import HTML
+from .routes import HTML
 from typing import Tuple
 
 @app.errorhandler(404)
