@@ -8,7 +8,7 @@ from .models import User, Post
 from .forms import LoginForm, RegistrationForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 from .email import send_password_reset_email
 
-from typing import Any, Union, cast, NewType 
+from typing import Any, Union, cast, NewType, Optional as Opt
 
 HTML = NewType('HTML', str)
 httpResponse = NewType('httpResponse', object)  # = flask.Response
@@ -41,7 +41,7 @@ def index() -> Union[httpResponse, HTML]:
     prev_url = url_for('index', page=posts.prev_num) \
         if posts.has_prev else None
 
-    rendered: HTML = render_template('index.html', title='Home', form=form, posts=posts.items,
+    rendered: HTML = render_template('main/index.html', title='Home', form=form, posts=posts.items,
                                      next_url=next_url, prev_url=prev_url)
     return rendered
 
@@ -179,7 +179,7 @@ def explore() -> HTML:
         if posts.has_next else None
     prev_url = url_for('explore', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template("index.html", title='Explore', posts=posts.items,
+    return render_template("main/index.html", title='Explore', posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
 
 
@@ -203,8 +203,8 @@ def reset_password(token: str) -> Union[httpResponse, HTML]:
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    user = User.verify_reset_password_token(token)
-    if not user:
+    user = cast(Opt[User], User.verify_reset_password_token(token))
+    if not user: 
         return redirect(url_for('index'))
 
     form = ResetPasswordForm()
