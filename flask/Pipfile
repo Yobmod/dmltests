@@ -17,6 +17,7 @@ SQLAlchemy = "*"
 Werkzeug = "*"
 pyjwt = "*"
 flask-bootstrap = "*"
+flask-moment = "*"
 
 [dev-packages]
 autopep8 = "*"
