@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter.filedialog import askdirectory, askopenfilename
 # from tkinter.ttk import Frame, Button, Label
 
-from typing import Any, Optional, NewType, Union, TypeVar
+from typing import Any, NewType, Union, TypeVar
 
 FileType = NewType('FileType', str)
 # FileType = str
