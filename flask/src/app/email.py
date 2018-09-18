@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask_mail import Message
 from threading import Thread
+from flask_babel import _
 
 from . import mail, app
 from .models import User

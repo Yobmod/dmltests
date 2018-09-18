@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request, Request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,6 +7,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_babel import Babel, lazy_gettext as _l
 
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
@@ -19,10 +20,28 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-login.login_view = 'login'  # name of view
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+babel = Babel(app)
+
+
+@babel.localeselector
+def get_locale() -> Request:
+    # return 'es'
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
+#Commands to generate .po files:
+# pybabel extract -F babel.cfg -k _l -o messages.pot . ## create .pot file
+# pybabel init -i messages.pot -d app/translations -l es  ## create .po files
+# pybabel compile - d app/translations  # compile to .mo files (after trans added to .po)
+# pybabel update - i messages.pot - d app/translations  # remake .pot file first, then this updates .po
+
+login.login_view = 'login'  # name of view
+login.login_message = _l('Please log in to access this page.')
+
+
 
 from app import routes, models, errors, email
 
@@ -37,6 +56,7 @@ if not app.debug:
             secure: Union[None, Tuple[str], Tuple[str, str]] = ('', )
         else:
             secure = None
+
         mail_handler = SMTPHandler(
             mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
             fromaddr=app.config['ADMINS'][0],
