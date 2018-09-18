@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 python-dotenv = "*"
 Flask = "*"
+flask-bootstrap = "*"
+flask-moment = "*"
 Flask-Migrate = "*"
 Flask-SQLAlchemy = "*"
 Flask-WTF = "*"
@@ -16,8 +18,7 @@ Jinja2 = "*"
 SQLAlchemy = "*"
 Werkzeug = "*"
 pyjwt = "*"
-flask-bootstrap = "*"
-flask-moment = "*"
+
 
 [dev-packages]
 autopep8 = "*"

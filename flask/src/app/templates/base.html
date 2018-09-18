@@ -4,6 +4,11 @@
 {% if title %}{{ title }} - Microblog{% else %}Welcome to Microblog{% endif %}
 {% endblock %}
 
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
+
 {% include 'navbar.html' %}
 
 {% block content %}
@@ -16,7 +21,9 @@
         {% endif %}
     {% endwith %}
 
-    {# application content needs to be provided in the app_content block #}
-    {% block app_content %}{% endblock %}
+{# application content needs to be provided in the app_content block #}
+{% block app_content %}
+{% endblock %}
+
 </div>
 {% endblock %}
