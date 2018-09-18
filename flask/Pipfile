@@ -19,6 +19,8 @@ SQLAlchemy = "*"
 Werkzeug = "*"
 pyjwt = "*"
 flask-babel = "*"
+requests = "*"
+guess-language-spirit = "*"
 
 [dev-packages]
 autopep8 = "*"

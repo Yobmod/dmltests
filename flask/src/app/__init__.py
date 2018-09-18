@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, Request
+from flask import Flask, request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -27,9 +27,10 @@ babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale() -> Request:
+def get_locale() -> str:
+    lang: str = request.accept_languages.best_match(app.config['LANGUAGES'])
     # return 'es'
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    return lang
 
 
 #Commands to generate .po files:
