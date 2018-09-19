@@ -3,13 +3,17 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from datetime import datetime
 from flask_babel import _, get_locale
+from guess_language import guess_language
+from flask import jsonify
 # from jinja2.environment import Template
+
 from . import app, db
 from .models import User, Post
 from .forms import LoginForm, RegistrationForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 from .email import send_password_reset_email
+from .translate import translate
 
-from typing import Any, Union, cast, NewType, Optional as Opt
+from typing import Any, Union, Dict, cast, NewType, Optional as Opt
 
 HTML = NewType('HTML', str)
 httpResponse = NewType('httpResponse', object)  # = flask.Response
@@ -29,7 +33,10 @@ def before_request() -> None:
 def index() -> Union[httpResponse, HTML]:
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        language = guess_language(form.post.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -218,3 +225,11 @@ def reset_password(token: str) -> Union[httpResponse, HTML]:
         return redirect(url_for('login'))
 
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate_text() -> Dict[str, str]:
+    return jsonify({'text': translate(request.form['text'],
+                                      request.form['source_language'],
+                                      request.form['dest_language'])})

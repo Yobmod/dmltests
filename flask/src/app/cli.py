@@ -3,18 +3,18 @@ import click
 from . import app
 
 
-@app.cli.group()
+@app.cli.group()  # adds function as base command ('translate')
 def translate() -> None:
     """Translation and localization commands."""
     pass
 
 
-@translate.command()
-@click.argument('lang')
+@translate.command()  # add functions as to translate
+@click.argument('lang')  # add argument to translate
 def init(lang: str) -> None:
-    """Initialize a new language."""
-    if os.system('pybabel extract -F babel.cfg -k _l -o messages.pot .'):
-        raise RuntimeError('extract command failed')
+    """Initialize a new language. e.g. flask translate init <language-code>"""
+    if os.system('pybabel extract -F babel.cfg -k _l -o messages.pot .'):   # if function is True, it didn't return 0,
+        raise RuntimeError('extract command failed')                        # so it failed -> then stop it
     if os.system(
             'pybabel init -i messages.pot -d app/translations -l ' + lang):
         raise RuntimeError('init command failed')
