@@ -1,17 +1,20 @@
 from flask import render_template
-from . import app, db
 
-from .routes import HTML
+from app import db
+from app.errors import bp
+
+from app.types import HTML
 from typing import Tuple
 
-@app.errorhandler(404)
+
+@bp.errorhandler(404)
 def not_found_error(error: Exception) -> Tuple[HTML, int]:
-    rendered: HTML = render_template('404.html')
+    rendered: HTML = render_template('errors/404.html')
     return (rendered, 404)
 
 
-@app.errorhandler(500)
+@bp.errorhandler(500)
 def internal_error(error: Exception) -> Tuple[HTML, int]:
     db.session.rollback()
-    rendered: HTML = render_template('500.html')
+    rendered: HTML = render_template('errors/500.html')
     return rendered, 500
