@@ -1,13 +1,14 @@
 import os
 import click
 from flask import Flask
+from app import models
+
 
 def register(app: Flask) -> None:
     @app.cli.group()  # adds function as base command ('translate')
     def translate() -> None:
         """Translation and localization commands."""
         pass
-
 
     @translate.command()  # add functions as to translate
     @click.argument('lang')  # add argument to translate
@@ -20,7 +21,6 @@ def register(app: Flask) -> None:
             raise RuntimeError('init command failed')
         os.remove('messages.pot')
 
-
     @translate.command()
     def update() -> None:
         """Update all languages."""
@@ -30,9 +30,19 @@ def register(app: Flask) -> None:
             raise RuntimeError('update command failed')
         os.remove('messages.pot')
 
-
     @translate.command()
     def compile() -> None:
         """Compile all languages."""
         if os.system('pybabel compile -d app/translations'):
             raise RuntimeError('compile command failed')
+
+    @app.cli.group()  # adds function as base command ('translate')
+    def search() -> None:
+        """Search indexing commands."""
+        pass
+
+    @search.command()
+    def reindex() -> None:
+        """Re-index database for search."""
+        models.Post.reindex()
+        print("search index updated")

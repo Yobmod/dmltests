@@ -8,6 +8,7 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
+from elasticsearch import Elasticsearch
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 
@@ -36,6 +37,11 @@ def create_app(config_class: Type[Config]=Config) -> Flask:
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
+
+    if app.config['ELASTICSEARCH_URL']:
+        app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
+    else:
+        app.elasticsearch = None
 
     from app.auth import bp as auth_bp
     from app.main import bp as main_bp
@@ -92,3 +98,5 @@ def get_locale() -> str:
 
 
 from app import models
+
+

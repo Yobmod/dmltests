@@ -11,30 +11,30 @@ class TestConfig(Config):
 
 
 class UserModelCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
-    def test_password_hashing(self):
+    def test_password_hashing(self) -> None:
         u = User(username='susan')
         u.set_password('cat')
         self.assertFalse(u.check_password('dog'))
         self.assertTrue(u.check_password('cat'))
 
-    def test_avatar(self):
+    def test_avatar(self) -> None:
         u = User(username='john', email='john@example.com')
         self.assertEqual(u.avatar(128), ('https://www.gravatar.com/avatar/'
                                          'd4c74594d841139328695756648b6bd6'
                                          '?d=identicon&s=128'))
 
-    def test_follow(self):
+    def test_follow(self) -> None:
         u1 = User(username='john', email='john@example.com')
         u2 = User(username='susan', email='susan@example.com')
         db.session.add(u1)
@@ -57,7 +57,7 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(u1.followed.count(), 0)
         self.assertEqual(u2.followers.count(), 0)
 
-    def test_follow_posts(self):
+    def test_follow_posts(self) -> None:
         # create four users
         u1 = User(username='john', email='john@example.com')
         u2 = User(username='susan', email='susan@example.com')

@@ -21,12 +21,15 @@ Werkzeug = "*"
 pyjwt = "*"
 requests = "*"
 guess-language-spirit = "*"
+elasticsearch = "*"
+
 
 [dev-packages]
 autopep8 = "*"
 coverage = "*"
 mccabe = "*"
 mypy = "*"
+sqlalchemy-stubs = {git = "https://github.com/dropbox/sqlalchemy-stubs"}
 pipenv = "*"
 pycodestyle = "*"
 pydocstyle = "*"

@@ -1,8 +1,22 @@
+from flask import request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
+
+from typing import Dict, Tuple, Any
+
+
+class SearchForm(FlaskForm):
+    q = StringField(_l('Search'), validators=[DataRequired()])
+
+    def __init__(self, *args: Tuple, **kwargs: Dict[str, Any]) -> None:
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'csrf_enabled' not in kwargs:
+            kwargs['csrf_enabled'] = False  # turn of csrf for search GETs
+        super(SearchForm, self).__init__(*args, **kwargs)
 
 
 class EditProfileForm(FlaskForm):
