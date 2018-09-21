@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fb44665ba8601d5e15c1979603fc66b1c7184a806dae48ce36a3e4ce2c4deabe"
+            "sha256": "5b983b0ef63535c3072a9d5f42aafe35d1bfcffecf7937ec29eb059cd9c7a4e9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -244,10 +244,6 @@
             ],
             "index": "pypi",
             "version": "==1.2.12"
-        },
-        "sqlalchemy-stubs": {
-            "git": "https://github.com/dropbox/sqlalchemy-stubs",
-            "ref": "1d3246415c60e9cf78bb553d7371d3920553b21f"
         },
         "urllib3": {
             "hashes": [
@@ -531,6 +527,10 @@
                 "sha256:9f3bcd3c401c3e862ec0ebe6d2c069ebc012ce142cce209c098ccb5b09136e89"
             ],
             "version": "==1.2.1"
+        },
+        "sqlalchemy-stubs": {
+            "git": "https://github.com/dropbox/sqlalchemy-stubs",
+            "ref": "1d3246415c60e9cf78bb553d7371d3920553b21f"
         },
         "typed-ast": {
             "hashes": [

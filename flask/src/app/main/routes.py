@@ -23,6 +23,14 @@ def before_request() -> None:
     g.locale = str(get_locale())  # g 'acts a proxy for a werkzeug local'
 
 
+@bp.route('/user/<username>/popup')
+@login_required
+def user_popup(username: str) -> HTML:
+    user = User.query.filter_by(username=username).first_or_404()
+    rendered: HTML = render_template('user_popup.html', user=user)
+    return rendered
+
+
 @bp.route('/search')
 @login_required
 def search() -> Union[httpResponse, HTML]:

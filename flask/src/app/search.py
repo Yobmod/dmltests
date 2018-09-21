@@ -1,7 +1,7 @@
 from flask import current_app
 
 from typing import List, Tuple
-from sqlalchemy.model import Model
+from flask_sqlalchemy.model import Model
 
 
 def add_to_index(index: str, model: Model) -> None:
