@@ -9,5 +9,76 @@
     "python.unitTest.promptToConfigure": false,
     "python.unitTest.pyTestEnabled": false,
     "python.unitTest.unittestEnabled": false,
-    "python.unitTest.nosetestsEnabled": false
+    "python.unitTest.nosetestsEnabled": false,
+
+    "todohighlight.keywords": [
+        {
+            "text": "Union",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Any",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "List",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Tuple",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Any",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Optional",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Opt",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "List",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "Dict",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "httpResponse",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "jsonResponse",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "HTML",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "cast",
+            "color": "green",
+            "backgroundColor": "",
+        },
+    ]
+
+
 }
+

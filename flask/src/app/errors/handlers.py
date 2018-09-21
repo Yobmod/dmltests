@@ -17,4 +17,4 @@ def not_found_error(error: Exception) -> Tuple[HTML, int]:
 def internal_error(error: Exception) -> Tuple[HTML, int]:
     db.session.rollback()
     rendered: HTML = render_template('errors/500.html')
-    return rendered, 500
+    return (rendered, 500)

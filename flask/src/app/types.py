@@ -2,11 +2,17 @@ from typing import Any, List, Union, Dict, cast, NewType, Optional as Opt, TypeV
 from flask import Response
 from sqlalchemy.orm import Session
 
+jsonType = Dict[str, Any]
 HTML = NewType('HTML', str)
 URL = NewType('URL', str)
 
 
 class httpResponse(Response):
+    """Subclass of flask.Response for type hinting"""
+    pass
+
+
+class jsonResponse(Response):
     """Subclass of flask.Response for type hinting"""
     pass
 

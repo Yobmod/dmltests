@@ -4,15 +4,16 @@ from flask import current_app
 from flask_login import UserMixin
 from hashlib import md5
 from time import time
+import json
 import jwt
 
 from app import db, login
 from app.search import add_to_index, remove_from_index, query_index, delete_index
 
 from typing import List, Optional as Opt, TypeVar, Tuple
-from sqlalchemy import Column
+from sqlalchemy import Column, String
 from sqlalchemy.orm.query import Query
-from app.types import SearchSession
+from app.types import jsonType, SearchSession
 
 
 UserType = TypeVar('UserType', bound='User')
@@ -31,6 +32,17 @@ followers = db.Table('followers',
                      db.Column('followed_id', db.Integer,
                                db.ForeignKey('user.id'))
                      )
+
+
+class Message(db.Model):        # type: ignore
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return '<Message {}>'.format(self.body)
 
 
 class SearchableMixin(object):
@@ -85,6 +97,18 @@ db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 
+class Notification(db.Model):       # type: ignore
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.Float, index=True, default=time)
+    payload_json = db.Column(db.Text)
+
+    def get_data(self) -> jsonType:
+        json_data: jsonType = json.loads(str(self.payload_json))
+        return json_data
+
+
 class User(UserMixin, db.Model):        # type: ignore
     __tablename__ = 'user'
 
@@ -101,6 +125,14 @@ class User(UserMixin, db.Model):        # type: ignore
                                secondaryjoin=(followers.c.followed_id == id),
                                backref=db.backref('followers', lazy='dynamic'),
                                lazy='dynamic')
+    messages_sent = db.relationship('Message',
+                                    foreign_keys='Message.sender_id',
+                                    backref='author', lazy='dynamic')
+    messages_received = db.relationship('Message',
+                                        foreign_keys='Message.recipient_id',
+                                        backref='recipient', lazy='dynamic')
+    last_message_read_time = db.Column(db.DateTime)
+    notifications = db.relationship('Notification', backref='user', lazy='dynamic')
 
     def __repr__(self) -> str:
         return '<User {}>'.format(self.username)
@@ -138,6 +170,19 @@ class User(UserMixin, db.Model):        # type: ignore
         my_follow_posts: List[Post] = followed.union(
             own).order_by(Post.timestamp.desc())
         return my_follow_posts
+
+    def new_messages(self) -> int:
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        all_user_msges = Message.query.filter_by(recipient=self)
+        new_msges = all_user_msges.filter(Message.timestamp > last_read_time)
+        new_msg_count: int = new_msges.count()
+        return new_msg_count
+
+    def add_notification(self, name: String, data: jsonType) -> Notification:
+        self.notifications.filter_by(name=name).delete()
+        n = Notification(name=name, payload_json=json.dumps(data), user=self)
+        db.session.add(n)
+        return n
 
     def get_reset_password_token(self, expires_in: int = 600) -> str:
         return jwt.encode(
