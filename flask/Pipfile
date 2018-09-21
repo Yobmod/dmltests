@@ -22,7 +22,10 @@ pyjwt = "*"
 requests = "*"
 guess-language-spirit = "*"
 elasticsearch = "*"
-
+rq = "*"
+celery = "*"
+"flask-rq2" = "*"
+flask-httpauth = "*"
 
 [dev-packages]
 autopep8 = "*"
@@ -36,6 +39,7 @@ pydocstyle = "*"
 pyflakes = "*"
 pylama = "*"
 pytest = "*"
+httpie = "*"
 pytest-coverage = "*"
 pytest-flask = "*"
 
