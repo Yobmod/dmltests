@@ -24,24 +24,22 @@ guess-language-spirit = "*"
 elasticsearch = "*"
 rq = "*"
 celery = "*"
-"flask-rq2" = "*"
+flask-rq2 = "*"
 flask-httpauth = "*"
 
 [dev-packages]
 autopep8 = "*"
 coverage = "*"
-mccabe = "*"
 mypy = "*"
 sqlalchemy-stubs = {git = "https://github.com/dropbox/sqlalchemy-stubs"}
 pipenv = "*"
-pycodestyle = "*"
 pydocstyle = "*"
-pyflakes = "*"
 pylama = "*"
 pytest = "*"
 httpie = "*"
 pytest-coverage = "*"
 pytest-flask = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\laventin.LANCS\\envs\\flask-FGMy6VVG\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\Users\\Yobmod\\envs\\flask-bfI0I-ZV\\Scripts\\python.exe",
     "python.linting.pylintEnabled": false,
     "python.linting.pylamaEnabled": true,
     "python.linting.pep8Enabled": false,
@@ -7,10 +7,11 @@
     "python.linting.mypyEnabled": true,
     "python.linting.flake8Enabled": true,
     "python.unitTest.promptToConfigure": false,
-    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.pyTestEnabled": true,
     "python.unitTest.unittestEnabled": false,
     "python.unitTest.nosetestsEnabled": false,
-
+"python.jediMemoryLimit": 0,
+  "python.jediEnabled": true,
     "todohighlight.keywords": [
         {
             "text": "Union",
@@ -74,6 +75,11 @@
         },
         {
             "text": "cast",
+            "color": "green",
+            "backgroundColor": "",
+        },
+        {
+            "text": "AnyStr",
             "color": "green",
             "backgroundColor": "",
         },

@@ -2,7 +2,8 @@ from typing import Any, List, Union, Dict, cast, NewType, Optional as Opt, TypeV
 from flask import Response
 from sqlalchemy.orm import Session
 
-jsonType = Dict[str, Any]
+# jsonType = Dict[str, Any]
+jsonType = NewType('jsonType', Dict[str, Any])
 HTML = NewType('HTML', str)
 URL = NewType('URL', str)
 

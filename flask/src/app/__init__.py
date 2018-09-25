@@ -13,7 +13,6 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from redis import Redis
 import rq
-from celery import Celery
 
 from typing import Union, Tuple, Type
 
@@ -48,10 +47,6 @@ def create_app(config_class: Type[Config]=Config) -> Flask:
         app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
     else:
         app.elasticsearch = None
-
-    if app.config['CELERY_BROKER_URL']:
-        celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-        celery.conf.update(app.config)
 
     from app.auth import bp as auth_bp
     from app.main import bp as main_bp
@@ -107,4 +102,4 @@ def get_locale() -> str:
 # pybabel update - i messages.pot - d app/translations  # remake .pot file first, then this updates .po
 
 
-from app import models
+# from app import models

@@ -4,7 +4,7 @@ from threading import Thread
 
 from app import mail
 
-from typing import List, Union, Optional as Opt, Tuple, AnyStr
+from typing import List, Optional as Opt, Tuple, AnyStr
 from app.types import HTML
 
 
@@ -16,7 +16,7 @@ def send_async_email(app: Flask, msg: Message) -> None:
 def send_email(subject: str,
                sender: str,
                recipients: List[str],
-               text_body: Union[str, HTML],
+               text_body: str,
                html_body: HTML,
                attachments: Opt[List[Tuple[str, str, AnyStr]]]=None,
                sync: bool=False) -> None:
