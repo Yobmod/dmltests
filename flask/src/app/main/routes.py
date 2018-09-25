@@ -31,6 +31,19 @@ def user_popup(username: str) -> HTML:
     return rendered
 
 
+@bp.route('/export_posts')
+@login_required
+def export_posts() -> httpResponse:
+    if current_user.get_task_in_progress('export_posts'):
+        flash(_('An export task is currently in progress'))
+    else:
+        current_user.launch_task('export_posts', _('Exporting posts...'))
+        db.session.commit()
+
+    response: httpResponse = redirect(url_for('main.user', username=current_user.username))
+    return response
+
+
 @bp.route('/send_message/<recipient>', methods=['GET', 'POST'])
 @login_required
 def send_message(recipient: User) -> Union[httpResponse, HTML]:

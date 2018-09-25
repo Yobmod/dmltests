@@ -11,6 +11,9 @@ from flask_babel import Babel, lazy_gettext as _l
 from elasticsearch import Elasticsearch
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
+from redis import Redis
+import rq
+from celery import Celery
 
 from typing import Union, Tuple, Type
 
@@ -37,11 +40,18 @@ def create_app(config_class: Type[Config]=Config) -> Flask:
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+
+    app.task_queue = rq.Queue('microblog-tasks', connection=app.redis)
 
     if app.config['ELASTICSEARCH_URL']:
         app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
     else:
         app.elasticsearch = None
+
+    if app.config['CELERY_BROKER_URL']:
+        celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+        celery.conf.update(app.config)
 
     from app.auth import bp as auth_bp
     from app.main import bp as main_bp
@@ -98,5 +108,3 @@ def get_locale() -> str:
 
 
 from app import models
-
-

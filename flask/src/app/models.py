@@ -6,11 +6,13 @@ from hashlib import md5
 from time import time
 import json
 import jwt
+import redis
+import rq
 
 from app import db, login
 from app.search import add_to_index, remove_from_index, query_index, delete_index
 
-from typing import List, Optional as Opt, TypeVar, Tuple
+from typing import List, Optional as Opt, TypeVar, Tuple, Dict, Any
 from sqlalchemy import Column, String
 from sqlalchemy.orm.query import Query
 from app.types import jsonType, SearchSession
@@ -43,6 +45,28 @@ class Message(db.Model):        # type: ignore
 
     def __repr__(self) -> str:
         return '<Message {}>'.format(self.body)
+
+
+class Task(db.Model):       # type: ignore
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    description = db.Column(db.String(128))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    complete = db.Column(db.Boolean, default=False)
+
+    def get_rq_job(self) -> Opt[rq.job.Job]:
+        try:
+            rq_job = rq.job.Job.fetch(self.id, connection=current_app.redis)
+        except (redis.exceptions.RedisError, rq.exceptions.NoSuchJobError) as e:
+            # logger.ERROR(e)
+            return None
+        else:
+            return rq_job
+
+    def get_progress(self) -> int:
+        job = self.get_rq_job()
+        progress: int = job.meta.get('progress', 0) if job is not None else 100
+        return progress
 
 
 class SearchableMixin(object):
@@ -133,6 +157,7 @@ class User(UserMixin, db.Model):        # type: ignore
                                         backref='recipient', lazy='dynamic')
     last_message_read_time = db.Column(db.DateTime)
     notifications = db.relationship('Notification', backref='user', lazy='dynamic')
+    tasks = db.relationship('Task', backref='user', lazy='dynamic')
 
     def __repr__(self) -> str:
         return '<User {}>'.format(self.username)
@@ -200,6 +225,23 @@ class User(UserMixin, db.Model):        # type: ignore
         else:
             verified_user: UserType = User.query.get(id)
             return verified_user
+
+    def launch_task(self, taskname: str, description: str, *args: Tuple, **kwargs: Dict[str, Any]) -> Task:
+        rq_job = current_app.task_queue.enqueue('app.tasks.' + taskname, self.id,
+                                                *args, **kwargs)
+        task = Task(id=rq_job.get_id(), name=taskname, description=description,
+                    user=self)
+        db.session.add(task)
+        return task
+
+    def get_tasks_in_progress(self) -> List[Opt[Task]]:
+        task_list: List[Opt[Task]] = Task.query.filter_by(user=self, complete=False).all()
+        return task_list
+
+    def get_task_in_progress(self, taskname: str) -> Opt[Task]:
+        current_task: Opt[Task] = Task.query.filter_by(name=taskname, user=self,
+                                                       complete=False).first()
+        return current_task
 
 
 class Post(SearchableMixin, db.Model):       # type: ignore

@@ -4,7 +4,7 @@ from threading import Thread
 
 from app import mail
 
-from typing import List, Union
+from typing import List, Union, Optional as Opt, Tuple, AnyStr
 from app.types import HTML
 
 
@@ -17,10 +17,20 @@ def send_email(subject: str,
                sender: str,
                recipients: List[str],
                text_body: Union[str, HTML],
-               html_body: HTML) -> None:
+               html_body: HTML,
+               attachments: Opt[List[Tuple[str, str, AnyStr]]]=None,
+               sync: bool=False) -> None:
     """ # cc bcc field also possible"""
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
-    # mail.send(msg)
-    Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+
+    if attachments is not None:
+        for attachment in attachments:  # for tuple in list
+            msg.attach(*attachment)  # unpack tuple as *args (filename. mimetype, data)
+
+    if sync:
+        mail.send(msg)
+    else:
+        Thread(target=send_async_email,
+               args=(current_app._get_current_object(), msg)).start()
