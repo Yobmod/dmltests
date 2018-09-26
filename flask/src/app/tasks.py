@@ -3,6 +3,7 @@ import sys
 from rq import get_current_job
 import json
 from flask import render_template
+from redis import exceptions
 
 from app import create_app
 from app import db
@@ -50,6 +51,8 @@ def export_posts(user_id: Integer) -> None:
                    html_body=render_template('email/export_posts.html', user=user),
                    attachments=[('posts.json', 'application/json', json.dumps({'posts': data}, indent=4))],
                    sync=True)
+    except exceptions.ConnectionError as ce:
+        app.logger.error('Redis server ConnectionError', exc_info=sys.exc_info())
     except Exception:
         _set_task_progress(100)
         app.logger.error('Unhandled exception', exc_info=sys.exc_info())
@@ -65,17 +68,3 @@ $ rq worker dmlmicro-tasks                  # start redis is cmd
 >>> job.is_finished     # get bool of if done
 >>> job.refresh()       # update job.meta
 """
-
-
-def example(seconds: int) -> None:
-    job = get_current_job()
-    print('Starting task')
-    # log.INFO(f"Example job submitted to RQdatetime.@ {datetime.now()}, id={} job.get_id()}")
-    for i in range(seconds):
-        job.meta['progress'] = 100.0 * i / seconds
-        job.save_meta()
-        print(i)
-        time.sleep(1)
-    job.meta['progress'] = 100
-    job.save_meta()
-    print('Task completed')
