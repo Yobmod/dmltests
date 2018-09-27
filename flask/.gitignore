@@ -7,7 +7,7 @@
 .pytest_cache/
 .coverage
 .cover
-/htmlcov
+*/htmlcov
 
 /static_root
 /media_root
