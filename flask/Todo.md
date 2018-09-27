@@ -1,9 +1,11 @@
 
 # To do
 
-Add error logs
-Add languages
+Add languages: eg German
 Add comments model
+
+Add tests
+Add error logs
 
 Add rest
 Quart

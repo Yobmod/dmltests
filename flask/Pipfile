@@ -26,6 +26,7 @@ rq = "*"
 celery = "*"
 flask-rq2 = "*"
 flask-httpauth = "*"
+pytest-xdist = "*"
 
 [dev-packages]
 autopep8 = "*"
@@ -35,11 +36,11 @@ sqlalchemy-stubs = {git = "https://github.com/dropbox/sqlalchemy-stubs"}
 pipenv = "*"
 pydocstyle = "*"
 pylama = "*"
-pytest = "*"
 httpie = "*"
 pytest-coverage = "*"
-pytest-flask = "*"
 flake8 = "*"
+pytest-sugar = "*"
+pytest-flask = "*"
 
 [requires]
 python_version = "3.6"

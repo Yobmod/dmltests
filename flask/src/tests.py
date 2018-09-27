@@ -3,11 +3,20 @@ import unittest
 from app import create_app, db
 from app.models import User, Post
 from config import Config
+import pytest
+import os
+
+from flask import Flask
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'  # + os.path.join(basedir, 'test.db')
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    REDIS_URL = 'redis://localhost:6379/0'
+    LANGUAGES = ['en', 'es']
 
 
 class UserModelCase(unittest.TestCase):
@@ -94,6 +103,77 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f2, [p2, p3])
         self.assertEqual(f3, [p3, p4])
         self.assertEqual(f4, [p4])
+
+
+@pytest.fixture
+def app() -> Flask:
+    app = create_app(TestConfig)
+    app.debug = True
+    return app
+
+
+class TestApp():
+    """
+    @pytest.fixture
+    def some_db(request_ctx) -> None:
+        db.create_all()
+
+        def fin() -> None:
+            db.session.remove()
+            db.drop_all()
+        request_ctx.addfinalizer(fin)
+
+    def setUp(self) -> None:
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        user = User(username='test' password='1', )
+    """
+    # def tearDown(self) -> None:
+    # db.session.remove()
+    # db.drop_all()
+    #  self.app_context.pop()
+
+    """
+    def non_user(self):
+        self.user = User(username='test' password='1', )  # , email='john5@example.com')
+        db.session.add(self.user)
+        db.session.commit()
+    """
+
+    def test_home_page(self, client) -> None:
+        response = client.get('/')  # test route
+        assert response.status_code == 200
+        assert b"landing page" in response.data, "'landing page' text not on rendered page"
+        assert b"Microblog base" in response.data  # text in base
+        assert b"Login" in response.data or b"Logout" in response.data   # text in navbar
+        assert b"random text" not in response.data
+
+        response_p = client.post('/')  # test route
+        assert response_p.status_code == 405  # POST METHOD not allowed
+
+    def test_index_page(self, client) -> None:
+        """
+        GIVEN a Flask application WHEN the '/' page is requested (GET)
+        THEN check the response is valid
+        """
+        """
+        user = User(username='test', email='test@example.com')
+        db.session.add(user)
+        user.set_password('1')
+        db.session.commit()
+        """
+
+        response = client.get('/index')  # test route
+        assert response.status_code == 302
+
+        response = client.post('/index')  # test route
+        assert response.status_code == 302
+        # assert b"Need an account?" in response.data
+        # assert b"Existing user?" in response.data
+
+        # self.tearDown()
 
 
 if __name__ == '__main__':

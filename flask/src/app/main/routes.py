@@ -118,7 +118,12 @@ def search() -> Union[httpResponse, HTML]:
         return rendered
 
 
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET'])
+def home() -> HTML:
+    rendered: HTML = render_template('main/home.html', title=_('Home'))
+    return rendered
+
+
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index() -> Union[httpResponse, HTML]:
@@ -133,7 +138,7 @@ def index() -> Union[httpResponse, HTML]:
         flash(_('Your post is now live!'))
         response = cast(httpResponse, redirect(url_for('main.index')))
         return response
-    else:
+    else:  #
         page = request.args.get('page', 1, type=int)
         posts = current_user.followed_posts().paginate(
             page, current_app.config['POSTS_PER_PAGE'], False)
