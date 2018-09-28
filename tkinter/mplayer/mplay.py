@@ -1,8 +1,15 @@
 import tkinter as tk
-from tkinter import Menu, Label, PhotoImage, Button, HORIZONTAL, Scale, messagebox, filedialog, TRUE, FALSE, BOTTOM, X, W, SUNKEN
+from tkinter import (Menu, Label, PhotoImage, Button, Scale,
+                     messagebox, filedialog,
+                     HORIZONTAL,  TRUE, FALSE, BOTTOM, X, W,
+                     SUNKEN, GROOVE, )
 from pygame import mixer
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3  # ASF, FLAC, MP4, OGG
 import os
+import threading
+import time
+
+from typing import cast
 
 """Are TRUE / FALSE needed?"""
 
@@ -14,14 +21,22 @@ mixer.init()  # initializing the mixer
 menubar = Menu(root)
 root.config(menu=menubar)
 
+# Set initial values
+init_vol = 70
+paused = False
+muted = FALSE
+filename: str
+
 # add submenu1 commands
 
 
-def browse_file() -> None:
+def browse_file() -> str:
     global filename                           # TODO change from global?
-    filename = filedialog.askopenfilename()   # TODO set start folder, set file types
+    filename = cast(str, filedialog.askopenfilename())   # TODO set start folder, set file types
+    # print(filename, isinstance(filename, str))
     show_details()
     statusbar['text'] = "File selected" + ' - ' + os.path.basename(filename)
+    return filename
 
 
 # Create the submenu1
@@ -43,11 +58,6 @@ menubar.add_cascade(label="Help", menu=subMenu2)
 subMenu2.add_command(label="About Us", command=about_us)
 
 
-# Set initial values
-init_vol = 70
-paused = False
-muted = FALSE
-
 root.geometry('300x300')
 root.title("Melody")
 root.iconbitmap(R'assets\icons\melody.ico')
@@ -57,6 +67,27 @@ filelabel.pack(pady=10)
 
 lengthlabel = Label(root, text='Total Length : --:--')
 lengthlabel.pack()
+
+currenttimelabel = Label(root, text='Current Time : --:--', relief=GROOVE)
+currenttimelabel.pack()
+
+
+def start_count(t: int) -> None:
+    global paused
+    # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
+    # Continue - Ignores all of the statements below it. We check if music is paused or not.
+    x = 0
+    while x <= t and mixer.music.get_busy():
+        if paused:
+            continue
+        else:
+            mins, secs = divmod(x, 60)
+            mins = round(mins)
+            secs = round(secs)
+            timeformat = '{:02d}:{:02d}'.format(mins, secs)
+            currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
+            time.sleep(1)
+            x += 1
 
 
 def show_details() -> None:
@@ -77,11 +108,14 @@ def show_details() -> None:
             print(e)
 
     # div - total_length/60, mod - total_length % 60
-    mins, secs = divmod(total_length, 60)
+    mins, secs = divmod(total_length, 60)  # returns (time//60, remainder)
     mins = round(mins)
     secs = round(secs)
     timeformat = '{:02d}:{:02d}'.format(mins, secs)
     lengthlabel['text'] = "Total Length" + ' - ' + timeformat
+
+    t1 = threading.Thread(target=start_count, args=(total_length, ))
+    t1.start()
 
 
 def pause_music() -> None:
@@ -119,7 +153,7 @@ def stop_music() -> None:
 
 def rewind_music() -> None:
     play_music()
-    statusbar['text'] = "Music Rewinding"
+    statusbar['text'] = "Music Rewound to start"
 
 
 def set_vol(val: str) -> None:
@@ -181,4 +215,13 @@ scale.grid(row=0, column=2, pady=15, padx=30)
 statusbar = Label(root, text="Welcome to Melody", relief=SUNKEN, anchor=W)
 statusbar.pack(side=BOTTOM, fill=X)
 
-root.mainloop()
+
+def on_closing() -> None:
+    stop_music()
+    root.destroy()
+    print('App closed')
+
+
+if __name__ == "__main__":
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.mainloop()
