@@ -1,0 +1,53 @@
+{
+"python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\tkinter-NVNGEl33\\Scripts\\python.exe",
+"python.linting.mypyEnabled": true,
+"python.linting.enabled": true,
+"python.linting.pydocstyleEnabled": false,
+"python.linting.pep8Enabled": false,
+"python.linting.flake8Enabled": true,
+"python.linting.pylamaEnabled": true,
+"python.linting.pylintEnabled": false,
+"editor.fontSize": 16,
+"window.zoomLevel": 1,
+"editor.multiCursorModifier": "ctrlCmd",
+"editor.formatOnPaste": true,
+"git.confirmSync": false,
+"git.enableSmartCommit": true,
+"workbench.colorTheme": "Chromodynamics",
+"workbench.iconTheme": "material-icon-theme",
+"editor.tokenColorCustomizations": {
+    "textMateRules": [
+        {
+            "name": "Comment",
+            "scope": "comment",
+            "settings": {
+                "foreground": "#1c4e27",
+                "fontStyle": "italic"
+            }
+        },
+        {
+            "scope": "variable.language.this",
+            "settings": {
+                "foreground": "#FF0000"
+            }
+        }
+    ]
+},
+"editor.renderWhitespace": "all",
+"sync.gist": "091b90e5a361260a507b3a1240ebf68f",
+"sync.autoDownload": false,
+"sync.autoUpload": false,
+"sync.forceDownload": false,
+"sync.quietSync": false,
+"sync.askGistName": false,
+"sync.removeExtensions": true,
+"sync.syncExtensions": true,
+"latex-workshop.message.update.show": false,
+"editor.wordWrapColumn": 120,
+"python.autoComplete.addBrackets": true,
+"python.globalModuleInstallation": true,
+"python.unitTest.pyTestEnabled": true,
+"code-runner.clearPreviousOutput": true,
+"python.jediMemoryLimit": -1,
+
+}
