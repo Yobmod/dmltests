@@ -12,7 +12,7 @@ import time
 import logging
 from dotenv import load_dotenv
 
-from typing import List, Tuple, Optional as Opt
+from typing import List, Tuple, Optional as Opt, Union
 
 
 # set DEBUG and logger
@@ -28,7 +28,9 @@ if DEBUG: print("DEBUG mode on")
 class Mplay(Frame):
     """Music player made with tkinter and pygame / mutagen"""
 
-    def __init__(self, master: Tk, title: str = "Melody") -> None:
+    def __init__(self,
+                 master: Union[Tk, tk.ThemedTk],
+                 title: str = "Melody") -> None:
         super(Mplay, self).__init__(master)
         mixer.init()  # initializing the mixer
         self.assets_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
