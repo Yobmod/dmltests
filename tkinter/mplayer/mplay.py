@@ -1,4 +1,4 @@
-from tkinter import (messagebox, filedialog, PhotoImage, Menu, Listbox,  # Frame, Label, Scale, Button,
+from tkinter import (messagebox, filedialog, PhotoImage, Menu, Listbox, Tk,  # Frame, Label, Scale, Button,
                      HORIZONTAL, LEFT, BOTTOM, X, W, SUNKEN, GROOVE, )
 from tkinter.ttk import Button, Scale, Label, Frame
 # import tkinter as tk
@@ -12,7 +12,7 @@ import time
 import logging
 from dotenv import load_dotenv
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional as Opt
 
 
 # set DEBUG and logger
@@ -25,295 +25,275 @@ logger = logging.getLogger()
 if DEBUG: print("DEBUG mode on")
 
 
-try:
-    root = tk.ThemedTk()
-    root.get_themes()                 # Returns a list of all themes that can be set
-    root.set_theme("plastik")
-except AttributeError as e:
-    root = tk.Tk()
-    if DEBUG: print("Themed Tk not loaded")
+class Mplay(Frame):
+    """Music player made with tkinter and pygame / mutagen"""
 
+    def __init__(self, master: Tk, title: str = "Melody") -> None:
+        super(Mplay, self).__init__(master)
+        mixer.init()  # initializing the mixer
+        self.assets_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
 
-mixer.init()  # initializing the mixer
+        self.master = master
+        self.master.geometry('600x400')
+        self.master.title(title)
+        self.master.minsize(400, 400)
+        self.master.iconbitmap(self.assets_path + '/icons/melody.ico')
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-statusbar = Label(root, text="Welcome to Melody", relief=SUNKEN, anchor=W)
-statusbar.pack(side=BOTTOM, fill=X)
+        self.init_vol: int = 70
+        self.paused: bool = False
+        self.muted: bool = False
+        self.playing: bool = False
+        self.current_song: Opt[str] = None
+        self.playlist: List[str] = []
+        self._init_ui()
 
-# Create the menubar
-menubar = Menu(root)
-root.config(menu=menubar)
+    def _init_ui(self) -> None:
+        self._menubar()
+        self._statusbar()
+        self._create_leftframe()
+        self._create_rightframe()
+        self._create_middleframe()
+        self._create_bottomframe()
 
-# Set initial values
-init_vol = 70
-paused = False
-muted = False
-playing = False
-current_song = None
-filename: str
-filename_path: str
-playlist: List[str] = []
+    def about_us(self) -> None:
+        messagebox.showinfo('About Melody', 'This is a music player built using Python Tkinter by @meee')
 
-# add submenu1 commands
+    def browse_file(self) -> None:
+        self.filename_path = filedialog.askopenfilename()
+        self.add_to_playlist()
+        mixer.music.queue(self.filename_path)
 
+    def add_to_playlist(self) -> None:
+        filename = os.path.basename(self.filename_path)
+        index = 0
+        self.playlistbox.insert(index, filename)
+        self.playlist.insert(index, self.filename_path)
+        index += 1
 
-def browse_file() -> None:
-    global filename_path
-    filename_path = filedialog.askopenfilename()
-    add_to_playlist(filename_path)
-    mixer.music.queue(filename_path)
+    def _create_leftframe(self) -> None:
+        self.leftframe = Frame(self.master)
+        self.leftframe.pack(side=LEFT, padx=30)
 
+        self.playlistbox = Listbox(self.leftframe)
+        self.playlistbox.pack()
 
-def add_to_playlist(filename: str) -> None:
-    filename = os.path.basename(filename)
-    index = 0
-    playlistbox.insert(index, filename)
-    playlist.insert(index, filename_path)
-    index += 1
+        addBtn = Button(self.leftframe, text="+ Add", command=self.browse_file)
+        addBtn.pack(side=LEFT)
 
+        delBtn = Button(self.leftframe, text="- Del", command=self.del_song)
+        delBtn.pack(side=LEFT)
 
-# Create the submenu1
-subMenu1 = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="File", menu=subMenu1)
-subMenu1.add_command(label="Open", command=browse_file)
-subMenu1.add_command(label="Exit", command=root.destroy)
+    def _statusbar(self) -> None:
+        self.statusbar = Label(self.master, text="Welcome to Melody", relief=SUNKEN, anchor=W)
+        self.statusbar.pack(side=BOTTOM, fill=X)
 
-# add submenu2 commands
+    def _menubar(self) -> None:
+        menubar = Menu(self.master)
+        root.config(menu=menubar)
+        # Create the submenu1
+        subMenu1 = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="File", menu=subMenu1)
+        subMenu1.add_command(label="Open", command=self.browse_file)
+        subMenu1.add_command(label="Exit", command=root.destroy)
+        # Create the submenu2
+        subMenu2 = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Help", menu=subMenu2)
+        subMenu2.add_command(label="About Us", command=self.about_us)
 
+    def del_song(self) -> None:
+        selected_song_from_box: Tuple[int] = self.playlistbox.curselection()
+        if selected_song_from_box:
+            selected_song = int(selected_song_from_box[0])
+            self.playlistbox.delete(selected_song)
+            self.playlist.pop(selected_song)
 
-def about_us() -> None:
-    messagebox.showinfo('About Melody', 'This is a music player built using Python Tkinter by @meee')
+    def _create_rightframe(self) -> None:
+        self.rightframe = Frame(self.master)
+        self.rightframe.pack()
 
+        self.filelabel = Label(self.rightframe, text='Lets make some noise!')
+        self.filelabel.pack(pady=10)
 
-# Create the submenu2
-subMenu2 = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Help", menu=subMenu2)
-subMenu2.add_command(label="About Us", command=about_us)
+        self.lengthlabel = Label(self.rightframe, text='Total Length : --:--')
+        self.lengthlabel.pack()
 
+        self.currenttimelabel = Label(self.rightframe, text='Current Time : --:--', relief=GROOVE)
+        self.currenttimelabel.pack()
 
-root.geometry('600x400')
-root.minsize(400, 400)
-root.title("Melody")
-root.iconbitmap(mplayer_path + R'\assets\icons\melody.ico')
+    def start_count(self, total_time: int) -> None:
+        # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
+        # Continue - Ignores all of the statements below it. We check if music is paused or not.
+        current_time = 0
+        while current_time <= total_time and mixer.music.get_busy():
+            if self.paused:
+                continue
+            else:
+                mins, secs = divmod(current_time, 60)
+                mins = round(mins)
+                secs = round(secs)
+                timeformat = '{:02d}:{:02d}'.format(mins, secs)
+                self.currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
+                time.sleep(1)
+                current_time += 1
 
+    def show_details(self, play_song: str) -> None:
+        self.filelabel['text'] = "Playing" + ' - ' + os.path.basename(play_song)
+        file_data = os.path.splitext(play_song)
 
-leftframe = Frame(root)
-leftframe.pack(side=LEFT, padx=30)
-
-playlistbox = Listbox(leftframe)
-playlistbox.pack()
-
-addBtn = Button(leftframe, text="+ Add", command=browse_file)
-addBtn.pack(side=LEFT)
-
-
-def del_song() -> None:
-    selected_song_from_box: Tuple[int] = playlistbox.curselection()
-    if selected_song_from_box:
-        selected_song = int(selected_song_from_box[0])
-        playlistbox.delete(selected_song)
-        playlist.pop(selected_song)
-
-
-delBtn = Button(leftframe, text="- Del", command=del_song)
-delBtn.pack(side=LEFT)
-
-
-rightframe = Frame(root)
-rightframe.pack()
-
-
-filelabel = Label(rightframe, text='Lets make some noise!')
-filelabel.pack(pady=10)
-
-lengthlabel = Label(rightframe, text='Total Length : --:--')
-lengthlabel.pack()
-
-currenttimelabel = Label(rightframe, text='Current Time : --:--', relief=GROOVE)
-currenttimelabel.pack()
-
-
-def start_count(total_time: int) -> None:
-    global paused
-
-    # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
-    # Continue - Ignores all of the statements below it. We check if music is paused or not.
-    current_time = 0
-    while current_time <= total_time and mixer.music.get_busy():
-        if paused:
-            continue
-        else:
-            mins, secs = divmod(current_time, 60)
-            mins = round(mins)
-            secs = round(secs)
-            timeformat = '{:02d}:{:02d}'.format(mins, secs)
-            currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
-            time.sleep(1)
-            current_time += 1
-
-
-def show_details(play_song: str) -> None:
-    filelabel['text'] = "Playing" + ' - ' + os.path.basename(play_song)
-    file_data = os.path.splitext(play_song)
-
-    if file_data[1] == '.mp3':
-        audio = MP3(play_song)
-        total_length = audio.info.length
-    elif file_data[1] == '.wav':
-        a = mixer.Sound(play_song)
-        total_length = a.get_length()
-    else:
-        try:
+        if file_data[1] == '.mp3':
+            audio = MP3(play_song)
+            total_length = audio.info.length
+        elif file_data[1] == '.wav':
             a = mixer.Sound(play_song)
             total_length = a.get_length()
-        except Exception as e:
-            print(e)
+        else:
+            try:
+                a = mixer.Sound(play_song)
+                total_length = a.get_length()
+            except Exception as e:
+                print(e)
+        # div - total_length/60, mod - total_length % 60
+        mins, secs = divmod(total_length, 60)  # returns (time//60, remainder)
+        mins = round(mins)
+        secs = round(secs)
+        timeformat = '{:02d}:{:02d}'.format(mins, secs)
+        self.lengthlabel['text'] = "Total Length" + ' - ' + timeformat
 
-    # div - total_length/60, mod - total_length % 60
-    mins, secs = divmod(total_length, 60)  # returns (time//60, remainder)
-    mins = round(mins)
-    secs = round(secs)
-    timeformat = '{:02d}:{:02d}'.format(mins, secs)
-    lengthlabel['text'] = "Total Length" + ' - ' + timeformat
+        t1 = threading.Thread(target=self.start_count, args=(total_length, ))
+        t1.start()
 
-    t1 = threading.Thread(target=start_count, args=(total_length, ))
-    t1.start()
+    def pause_music(self) -> None:
+        if self.playing:
+            self.paused = True
+            mixer.music.pause()
+            self.statusbar['text'] = "Music Paused"
 
-
-def pause_music() -> None:
-    global paused
-    paused = True
-    mixer.music.pause()
-    statusbar['text'] = "Music Paused"
-
-
-def play_music() -> None:
-    """if not playing: play, if playing and paused, unpause"""
-    global paused
-    global playing
-    global current_song
-    try:
-        selected_song_from_box: Tuple[int] = playlistbox.curselection()
-        selected_song = int(selected_song_from_box[0])
-        play_it = playlist[selected_song]
-    except IndexError as e:  # no files in the playlistbox tuple
-        statusbar['text'] = "Choose a file from the playlist"
-        if DEBUG:
-            print(e)
-    except Exception as e:
-        messagebox.showerror('File not found, or unknown file type. Please check again.')
-        if DEBUG:
-            print(e)
-
-    if not playing:  # if not yet playing, play selected song
+    def play_music(self) -> None:
+        """if not playing: play, if playing and paused, unpause"""
+        play_it = None
         try:
-            stop_music()
-            time.sleep(0.5)
-            mixer.music.load(play_it)
-            mixer.music.play()
+            selected_song_from_box: Tuple[int] = self.playlistbox.curselection()
+            selected_song = int(selected_song_from_box[0])
+        except IndexError as e:  # no files in the playlistbox tuple
+            self.statusbar['text'] = "Choose a file from the playlist"
+            if DEBUG: print(e)
         except Exception as e:
             messagebox.showerror('File not found, or unknown file type. Please check again.')
-            if DEBUG:
-                print(e)
+            if DEBUG: print(e)
         else:
-            playing = True
-            current_song = play_it
-            show_details(play_it)
-            statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
-    elif playing and paused:  # if paused, resume
-        mixer.music.unpause()
-        statusbar['text'] = "Music Resumed"
-        paused = False
-    elif playing and not paused:
-        if current_song == play_it:  # if already playing song, do nothing
-            statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
-        else:           # if different song selected, retry
-            playing = False
-            play_music()
+            if self.playlist:
+                play_it = self.playlist[selected_song]
 
+        if not self.playing and play_it:  # if not yet playing, play selected song
+            try:
+                self.stop_music()
+                time.sleep(0.5)
+                mixer.music.load(play_it)
+                mixer.music.play()
+            except Exception as e:
+                messagebox.showerror('File not found, or unknown file type. Please check again.')
+                if DEBUG: print(e)
+            else:
+                self.playing = True
+                self.current_song = play_it
+                self.show_details(play_it)
+                self.statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
+        elif self.playing and self.paused:  # if paused, resume
+            mixer.music.unpause()
+            self.statusbar['text'] = "Music Resumed"
+            self.paused = False
+        elif self.playing and not self.paused:
+            if play_it == self.current_song and play_it is not None:  # if already playing song, do nothing
+                self.statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
+            else:           # if different song selected, retry
+                self.playing = False
+                self.play_music()
 
-def stop_music() -> None:
-    global playing
-    global current_song
-    playing = False
-    current_song = None
-    mixer.music.stop()
-    statusbar['text'] = "Music Stopped"
+    def stop_music(self) -> None:
+        if self.playing:
+            self.playing = False
+            self.current_song = None
+            mixer.music.stop()
+            self.statusbar['text'] = "Music Stopped"
 
+    def rewind_music(self) -> None:
+        if self.playing:
+            self.stop_music()
+            time.sleep(0.5)
+            self.play_music()
+            self.statusbar['text'] = "Music Rewound to start"
 
-def rewind_music() -> None:
-    play_music()
-    statusbar['text'] = "Music Rewound to start"
+    def set_vol(self, val: str) -> None:
+        vol_float = float(val)
+        volume = int(vol_float) / 100
+        mixer.music.set_volume(volume)
+        # set_volume of mixer takes value only from 0 to 1
 
+    def mute_music(self) -> None:
+        if self.muted:  # Unmute the music
+            mixer.music.set_volume(0.7)
+            self.volumeBtn.configure(image=self.volumePhoto)
+            self.scale.set(70)
+            self.muted = False
+        else:  # mute the music
+            mixer.music.set_volume(0)
+            self.volumeBtn.configure(image=self.mutePhoto)
+            self.scale.set(0)
+            self.muted = True
 
-def set_vol(val: str) -> None:
-    vol_float = float(val)
-    volume = int(vol_float) / 100
-    mixer.music.set_volume(volume)
-    # set_volume of mixer takes value only from 0 to 1
+    def _create_middleframe(self) -> None:
+        self.middleframe = Frame(self.rightframe)
+        self.middleframe.pack(pady=30, padx=30)
 
+        self.playPhoto = PhotoImage(file=self.assets_path + '/icons/play.png')
+        playBtn = Button(self.middleframe, image=self.playPhoto, command=self.play_music)
+        playBtn.grid(row=0, column=1, padx=10)
 
-def mute_music() -> None:
-    global muted
-    if muted:  # Unmute the music
-        mixer.music.set_volume(0.7)
-        volumeBtn.configure(image=volumePhoto)
-        scale.set(70)
-        muted = False
-    else:  # mute the music
-        mixer.music.set_volume(0)
-        volumeBtn.configure(image=mutePhoto)
-        scale.set(0)
-        muted = True
+        self.stopPhoto = PhotoImage(file=self.assets_path + '/icons/stop.png')
+        stopBtn = Button(self.middleframe, image=self.stopPhoto, command=self.stop_music)
+        stopBtn.grid(row=0, column=2, padx=10)
 
+        self.pausePhoto = PhotoImage(file=self.assets_path + '/icons/pause.png')
+        pauseBtn = Button(self.middleframe, image=self.pausePhoto, command=self.pause_music)
+        pauseBtn.grid(row=0, column=3, padx=10)
 
-middleframe = Frame(rightframe)
-middleframe.pack(pady=30, padx=30)
+    def _create_bottomframe(self) -> None:
+        self.bottomframe = Frame(self.rightframe)
+        self.bottomframe.pack()
 
+        self.mutePhoto = PhotoImage(file=self.assets_path + '/icons/mute.png')
+        self.volumePhoto = PhotoImage(file=self.assets_path + '/icons/volume.png')
+        self.volumeBtn = Button(self.bottomframe, image=self.volumePhoto, command=self.mute_music)
+        self.volumeBtn.grid(row=0, column=1)
 
-playPhoto = PhotoImage(file=mplayer_path + '/assets/icons/play.png')
-playBtn = Button(middleframe, image=playPhoto, command=play_music)
-playBtn.grid(row=0, column=1, padx=10)
+        self.rewindPhoto = PhotoImage(file=self.assets_path + '/icons/rewind.png')
+        rewindBtn = Button(self.bottomframe, image=self.rewindPhoto, command=self.rewind_music)
+        rewindBtn.grid(row=0, column=0)
 
-stopPhoto = PhotoImage(file=mplayer_path + '/assets/icons/stop.png')
-stopBtn = Button(middleframe, image=stopPhoto, command=stop_music)
-stopBtn.grid(row=0, column=2, padx=10)
+        self.scale = Scale(self.bottomframe, from_=0, to=100, orient=HORIZONTAL, command=self.set_vol)
+        self.scale.set(self.init_vol)
+        mixer.music.set_volume(self.init_vol / 100)
+        self.scale.grid(row=0, column=2, pady=15, padx=30)
 
-pausePhoto = PhotoImage(file=mplayer_path + '/assets/icons/pause.png')
-pauseBtn = Button(middleframe, image=pausePhoto, command=pause_music)
-pauseBtn.grid(row=0, column=3, padx=10)
+    def on_closing(self) -> None:
+        try:
+            self.stop_music()
+            self.master.destroy()
+        except Exception as e:
+            if DEBUG: print(e)
+        else:
+            print('App closed')
 
-
-bottomframe = Frame(rightframe)
-bottomframe.pack()
-
-
-mutePhoto = PhotoImage(file=mplayer_path + '/assets/icons/mute.png')
-volumePhoto = PhotoImage(file=mplayer_path + '/assets/icons/volume.png')
-volumeBtn = Button(bottomframe, image=volumePhoto, command=mute_music)
-volumeBtn.grid(row=0, column=1)
-
-
-rewindPhoto = PhotoImage(file=mplayer_path + '/assets/icons/rewind.png')
-rewindBtn = Button(bottomframe, image=rewindPhoto, command=rewind_music)
-rewindBtn.grid(row=0, column=0)
-
-scale = Scale(bottomframe, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
-scale.set(init_vol)
-mixer.music.set_volume(init_vol / 100)
-scale.grid(row=0, column=2, pady=15, padx=30)
-
-
-def on_closing() -> None:
-    try:
-        stop_music()
-        root.destroy()
-    except Exception as e:
-        if DEBUG: print(e)
-    else:
-        print('App closed')
-
-
-root.protocol("WM_DELETE_WINDOW", on_closing)
 
 if __name__ == "__main__":
-    root.mainloop()
+    try:
+        root = tk.ThemedTk()
+        root.get_themes()                 # Returns a list of all themes that can be set
+        root.set_theme("plastik")
+    except AttributeError as e:
+        root = tk.Tk()
+        if DEBUG: print("Themed Tk not loaded")
+    finally:
+        mplay_app = Mplay(root)
+        root.mainloop()
