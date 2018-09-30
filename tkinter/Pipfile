@@ -10,7 +10,6 @@ python-dotenv = "*"
 ttkthemes = "*"
 
 [dev-packages]
-pytest-cov = "*"
 pipenv = "*"
 "autopep8" = "*"
 "flake8" = "*"
@@ -18,6 +17,7 @@ mypy = "*"
 pylama = "*"
 pyinstaller = "*"
 cython = "*"
+pytest-cov = "*"
 pytest-sugar = "*"
 pytest-xdist = "*"
 
