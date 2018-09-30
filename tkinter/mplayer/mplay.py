@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import (Menu, Label, PhotoImage, Button, Scale,
+from tkinter import (Menu, Label, PhotoImage, Button, Scale, Listbox,
                      messagebox, filedialog,
-                     HORIZONTAL,  TRUE, FALSE, BOTTOM, X, W,
+                     HORIZONTAL, TRUE, FALSE, LEFT, BOTTOM, X, W,
                      SUNKEN, GROOVE, )
 from pygame import mixer
 from mutagen.mp3 import MP3  # ASF, FLAC, MP4, OGG
@@ -9,13 +9,16 @@ import os
 import threading
 import time
 
-from typing import cast
+from typing import List, Tuple
 
 """Are TRUE / FALSE needed?"""
 
 
 root = tk.Tk()
 mixer.init()  # initializing the mixer
+
+statusbar = Label(root, text="Welcome to Melody", relief=SUNKEN, anchor=W)
+statusbar.pack(side=BOTTOM, fill=X)
 
 # Create the menubar
 menubar = Menu(root)
@@ -26,17 +29,24 @@ init_vol = 70
 paused = False
 muted = FALSE
 filename: str
+filename_path: str
+playlist: List[str] = []
 
 # add submenu1 commands
 
 
-def browse_file() -> str:
-    global filename                           # TODO change from global?
-    filename = cast(str, filedialog.askopenfilename())   # TODO set start folder, set file types
-    # print(filename, isinstance(filename, str))
-    show_details()
-    statusbar['text'] = "File selected" + ' - ' + os.path.basename(filename)
-    return filename
+def browse_file() -> None:
+    global filename_path
+    filename_path = filedialog.askopenfilename()
+    add_to_playlist(filename_path)
+
+
+def add_to_playlist(filename: str) -> None:
+    filename = os.path.basename(filename)
+    index = 0
+    playlistbox.insert(index, filename)
+    playlist.insert(index, filename_path)
+    index += 1
 
 
 # Create the submenu1
@@ -58,51 +68,80 @@ menubar.add_cascade(label="Help", menu=subMenu2)
 subMenu2.add_command(label="About Us", command=about_us)
 
 
-root.geometry('300x300')
+root.geometry('500x300')
+root.minsize(300, 300)
 root.title("Melody")
 root.iconbitmap(R'assets\icons\melody.ico')
 
-filelabel = Label(root, text='Lets make some noise!')
+
+leftframe = tk.Frame(root)
+leftframe.pack(side=LEFT, padx=30)
+
+playlistbox = Listbox(leftframe)
+playlistbox.pack()
+
+addBtn = Button(leftframe, text="+ Add", command=browse_file)
+addBtn.pack(side=LEFT)
+
+
+def del_song() -> None:
+    selected_song_from_box: Tuple[int] = playlistbox.curselection()
+    if selected_song_from_box:
+        selected_song = int(selected_song_from_box[0])
+        playlistbox.delete(selected_song)
+        playlist.pop(selected_song)
+
+
+delBtn = Button(leftframe, text="- Del", command=del_song)
+delBtn.pack(side=LEFT)
+
+
+rightframe = tk.Frame(root)
+rightframe.pack()
+
+
+filelabel = Label(rightframe, text='Lets make some noise!')
 filelabel.pack(pady=10)
 
-lengthlabel = Label(root, text='Total Length : --:--')
+lengthlabel = Label(rightframe, text='Total Length : --:--')
 lengthlabel.pack()
 
-currenttimelabel = Label(root, text='Current Time : --:--', relief=GROOVE)
+currenttimelabel = Label(rightframe, text='Current Time : --:--', relief=GROOVE)
 currenttimelabel.pack()
 
 
-def start_count(t: int) -> None:
+def start_count(total_time: int) -> None:
     global paused
+
     # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
     # Continue - Ignores all of the statements below it. We check if music is paused or not.
-    x = 0
-    while x <= t and mixer.music.get_busy():
+    current_time = 0
+    while current_time <= total_time and mixer.music.get_busy():
         if paused:
             continue
         else:
-            mins, secs = divmod(x, 60)
+            mins, secs = divmod(current_time, 60)
             mins = round(mins)
             secs = round(secs)
             timeformat = '{:02d}:{:02d}'.format(mins, secs)
             currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
             time.sleep(1)
-            x += 1
+            current_time += 1
 
 
-def show_details() -> None:
-    filelabel['text'] = "Playing" + ' - ' + os.path.basename(filename)
-    file_data = os.path.splitext(filename)
+def show_details(play_song: str) -> None:
+    filelabel['text'] = "Playing" + ' - ' + os.path.basename(play_song)
+    file_data = os.path.splitext(play_song)
 
     if file_data[1] == '.mp3':
-        audio = MP3(filename)
+        audio = MP3(play_song)
         total_length = audio.info.length
     elif file_data[1] == '.wav':
-        a = mixer.Sound(filename)
+        a = mixer.Sound(play_song)
         total_length = a.get_length()
     else:
         try:
-            a = mixer.Sound(filename)
+            a = mixer.Sound(play_song)
             total_length = a.get_length()
         except Exception as e:
             print(e)
@@ -134,16 +173,25 @@ def play_music() -> None:
         paused = FALSE
     else:
         try:
-            mixer.music.load(filename)
+            stop_music()
+            time.sleep(1)
+            selected_song_from_box: Tuple[int] = playlistbox.curselection()
+            selected_song = int(selected_song_from_box[0])
+            play_it = playlist[selected_song]
+            mixer.music.load(play_it)
             mixer.music.play()
-            show_details()
-        except NameError:  # filename not defined
+        except NameError as e:  # filename not defined
             statusbar['text'] = "Please select a file to play"
+            print(e)
+        except IndexError as e:  # no files in the playlistbox tuple
+            statusbar['text'] = "Choose a file from the playlist"
+            print(e)
         except Exception as e:
             messagebox.showerror('File not found, or unknown file type. Please check again.')
             print(e)
         else:
-            statusbar['text'] = "Playing music" + ' - ' + os.path.basename(filename)
+            show_details(play_it)
+            statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
 
 
 def stop_music() -> None:
@@ -176,8 +224,8 @@ def mute_music() -> None:
         muted = TRUE
 
 
-middleframe = tk.Frame(root)
-middleframe.pack(pady=10)
+middleframe = tk.Frame(rightframe)
+middleframe.pack(pady=30, padx=30)
 
 
 playPhoto = PhotoImage(file='assets/icons/play.png')
@@ -193,7 +241,7 @@ pauseBtn = Button(middleframe, image=pausePhoto, command=pause_music)
 pauseBtn.grid(row=0, column=3, padx=10)
 
 
-bottomframe = tk.Frame(root)
+bottomframe = tk.Frame(rightframe)
 bottomframe.pack()
 
 
@@ -211,9 +259,6 @@ scale = Scale(bottomframe, from_=0, to=100, orient=HORIZONTAL, command=set_vol)
 scale.set(init_vol)
 mixer.music.set_volume(init_vol/100)
 scale.grid(row=0, column=2, pady=15, padx=30)
-
-statusbar = Label(root, text="Welcome to Melody", relief=SUNKEN, anchor=W)
-statusbar.pack(side=BOTTOM, fill=X)
 
 
 def on_closing() -> None:
