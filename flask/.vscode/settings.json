@@ -16,7 +16,7 @@
         ],
     "python.unitTest.pyTestEnabled": true,
 
-"python.jediMemoryLimit": 0,
+"python.jediMemoryLimit": -1,
   "python.jediEnabled": true,
     "todohighlight.keywords": [
         {

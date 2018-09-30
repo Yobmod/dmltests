@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 pygame = "*"
 mutagen = "*"
+python-dotenv = "*"
+ttkthemes = "*"
 
 [dev-packages]
 pytest-cov = "*"
@@ -14,6 +16,10 @@ pipenv = "*"
 "flake8" = "*"
 mypy = "*"
 pylama = "*"
+pyinstaller = "*"
+cython = "*"
+pytest-sugar = "*"
+pytest-xdist = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
