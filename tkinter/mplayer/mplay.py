@@ -18,36 +18,48 @@ from typing import List, Tuple, Optional as Opt, Union
 # set DEBUG and logger
 mplayer_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = os.path.dirname(mplayer_path)
-devenv_path = os.path.join(parent_path, '.env')
-load_dotenv(devenv_path)
+env_path = os.path.join(parent_path, '.env')
+load_dotenv(env_path)
 DEBUG = os.environ.get("DEBUG") or False
 logger = logging.getLogger()
 if DEBUG: print("DEBUG mode on")
 
 
 class Mplay(Frame):
-    """Music player made with tkinter and pygame / mutagen"""
+    """Music player made with tkinter and pygame / mutagen
+    Usage: app = Mplay(master: tk.Tk, *, title: str=, width: int=, height=)"""
+    master: Frame  # shut up mypy
 
     def __init__(self,
-                 master: Union[Tk, tk.ThemedTk],
-                 title: str = "Melody") -> None:
-        super(Mplay, self).__init__(master)
-        mixer.init()  # initializing the mixer
+                 parent: Union[Tk, tk.ThemedTk] = None,
+                 *,
+                 title: str = "Music Player",
+                 width: int = 600,
+                 height: int = 400,
+                 ) -> None:
+        super().__init__(parent)  # call ttk.Frame constructor
+        mixer.init()  # initializethe pygame mixer
         self.assets_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
 
-        self.master = master
-        self.master.geometry('600x400')
-        self.master.title(title)
-        self.master.minsize(400, 400)
-        self.master.iconbitmap(self.assets_path + '/icons/melody.ico')
-        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
+        if parent is not None:
+            self.parent = parent
+        else:
+            self.parent = self.master
+
+        self.parent.geometry(f'{width}x{height}')
+        self.parent.title(title)
+        self.parent.minsize(width // 2, height // 2)
+        self.parent.iconbitmap(self.assets_path + '/icons/melody.ico')
+        self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.init_vol: int = 70
         self.paused: bool = False
         self.muted: bool = False
         self.playing: bool = False
         self.current_song: Opt[str] = None
+        self.selected_song_num: Opt[int] = None
         self.playlist: List[str] = []
+
         self._init_ui()
 
     def _init_ui(self) -> None:
@@ -62,19 +74,20 @@ class Mplay(Frame):
         messagebox.showinfo('About Melody', 'This is a music player built using Python Tkinter by @meee')
 
     def browse_file(self) -> None:
-        self.filename_path = filedialog.askopenfilename()
-        self.add_to_playlist()
-        mixer.music.queue(self.filename_path)
+        filename_path = filedialog.askopenfilename()
+        if filename_path:
+            self.add_to_playlist(filename_path)
+            mixer.music.queue(filename_path)
 
-    def add_to_playlist(self) -> None:
-        filename = os.path.basename(self.filename_path)
+    def add_to_playlist(self, filepath: str) -> None:
+        filename = os.path.basename(filepath)
         index = 0
         self.playlistbox.insert(index, filename)
-        self.playlist.insert(index, self.filename_path)
+        self.playlist.insert(index, filepath)
         index += 1
 
     def _create_leftframe(self) -> None:
-        self.leftframe = Frame(self.master)
+        self.leftframe = Frame(self.parent)
         self.leftframe.pack(side=LEFT, padx=30)
 
         self.playlistbox = Listbox(self.leftframe)
@@ -87,11 +100,11 @@ class Mplay(Frame):
         delBtn.pack(side=LEFT)
 
     def _statusbar(self) -> None:
-        self.statusbar = Label(self.master, text="Welcome to Melody", relief=SUNKEN, anchor=W)
+        self.statusbar = Label(self.parent, text="Welcome to Melody", relief=SUNKEN, anchor=W)
         self.statusbar.pack(side=BOTTOM, fill=X)
 
     def _menubar(self) -> None:
-        menubar = Menu(self.master)
+        menubar = Menu(self.parent)
         root.config(menu=menubar)
         # Create the submenu1
         subMenu1 = Menu(menubar, tearoff=0)
@@ -104,14 +117,18 @@ class Mplay(Frame):
         subMenu2.add_command(label="About Us", command=self.about_us)
 
     def del_song(self) -> None:
-        selected_song_from_box: Tuple[int] = self.playlistbox.curselection()
-        if selected_song_from_box:
-            selected_song = int(selected_song_from_box[0])
-            self.playlistbox.delete(selected_song)
-            self.playlist.pop(selected_song)
+        self.get_selected_song_num()  # update self.selected_song_num
+        if self.selected_song_num is not None:  # if a song is selected
+            if self.playlist[self.selected_song_num] == self.current_song:  # if song is currently playing
+                self.stop_music()                                           # stop it
+            self.playlistbox.delete(self.selected_song_num)  # delete the song from the box
+            self.playlist.pop(self.selected_song_num)        # and playlist
+            # self.selected_song_num remains same, so will play/del next song?
+            self.reset_song()
+            self.selected_song_num = None  # reset self.selected_song_num
 
     def _create_rightframe(self) -> None:
-        self.rightframe = Frame(self.master)
+        self.rightframe = Frame(self.parent)
         self.rightframe.pack()
 
         self.filelabel = Label(self.rightframe, text='Lets make some noise!')
@@ -124,12 +141,11 @@ class Mplay(Frame):
         self.currenttimelabel.pack()
 
     def start_count(self, total_time: int) -> None:
-        # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
-        # Continue - Ignores all of the statements below it. We check if music is paused or not.
+        """."""
         current_time = 0
-        while current_time <= total_time and mixer.music.get_busy():
+        while current_time <= total_time and mixer.music.get_busy():  # music.get_busy() -> Returns False when stopped
             if self.paused:
-                continue
+                continue  # if paused, infinite loop (don't count)
             else:
                 mins, secs = divmod(current_time, 60)
                 mins = round(mins)
@@ -138,6 +154,13 @@ class Mplay(Frame):
                 self.currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
                 time.sleep(1)
                 current_time += 1
+
+    def reset_song(self) -> None:
+        self.current_song = None
+        self.filelabel['text'] = ""
+        self.lengthlabel['text'] = 'Total Length : --:--'
+        self.currenttimelabel['text'] = "Current Time : --:--"
+        self.statusbar['text'] = ""
 
     def show_details(self, play_song: str) -> None:
         self.filelabel['text'] = "Playing" + ' - ' + os.path.basename(play_song)
@@ -171,21 +194,24 @@ class Mplay(Frame):
             mixer.music.pause()
             self.statusbar['text'] = "Music Paused"
 
-    def play_music(self) -> None:
-        """if not playing: play, if playing and paused, unpause"""
-        play_it = None
+    def get_selected_song_num(self) -> None:
         try:
             selected_song_from_box: Tuple[int] = self.playlistbox.curselection()
-            selected_song = int(selected_song_from_box[0])
+            self.selected_song_num = int(selected_song_from_box[0])
         except IndexError as e:  # no files in the playlistbox tuple
             self.statusbar['text'] = "Choose a file from the playlist"
             if DEBUG: print(e)
         except Exception as e:
             messagebox.showerror('File not found, or unknown file type. Please check again.')
             if DEBUG: print(e)
+
+    def play_music(self) -> None:
+        """if not playing: play, if playing and paused, unpause"""
+        self.get_selected_song_num()  # update self.selected_song_num
+        if self.selected_song_num is not None and self.playlist:
+            play_it: Opt[str] = self.playlist[self.selected_song_num]
         else:
-            if self.playlist:
-                play_it = self.playlist[selected_song]
+            play_it = None
 
         if not self.playing and play_it:  # if not yet playing, play selected song
             try:
@@ -281,7 +307,7 @@ class Mplay(Frame):
     def on_closing(self) -> None:
         try:
             self.stop_music()
-            self.master.destroy()
+            self.parent.destroy()
         except Exception as e:
             if DEBUG: print(e)
         else:
@@ -297,5 +323,5 @@ if __name__ == "__main__":
         root = tk.Tk()
         if DEBUG: print("Themed Tk not loaded")
     finally:
-        mplay_app = Mplay(root)
+        mplay_app = Mplay(root, title="DML Music Player")
         root.mainloop()

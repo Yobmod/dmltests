@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pygame = "*"
+mutagen = "*"
+python-dotenv = "*"
+pyside2 = "*"
+
+[dev-packages]
+pipenv = "*"
+"autopep8" = "*"
+"flake8" = "*"
+mypy = "*"
+pylama = "*"
+pyinstaller = "*"
+cython = "*"
+pytest-cov = "*"
+pytest-sugar = "*"
+pytest-xdist = "*"
+
+[requires]
+python_version = "3.6"
