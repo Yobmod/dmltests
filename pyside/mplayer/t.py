@@ -28,7 +28,8 @@ if DEBUG: print("DEBUG mode on")
 class Form(QWidget):
     """"""
 
-    def __init__(self, parent: QApplication=None, *, title: str="wooo") -> None:
+    def __init__(self, parent: QApplication=None, *, 
+        title: str="wooo", width=400, height= 600, ) -> None:
         """Constructor"""
         super().__init__(parent)
         mixer.init()  # initializethe pygame mixer
@@ -39,12 +40,18 @@ class Form(QWidget):
             self.parent = parent
 
         """
-        self.parent.geometry(f'{width}x{height}')
-        self.parent.title(title)
-        self.parent.minsize(width // 2, height // 2)
-        self.parent.iconbitmap(self.assets_path + '/icons/melody.ico')
-        self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.parent.iconbitmap()
         """
+        horiz_pos = 100  # from left of screen
+        vertic_pos = 200  # from top of screen
+        self.height = height
+        self.width = width
+        self.title = title
+
+        self.setGeometry(horiz_pos, vertic_pos, self.width, self.height)      # QtCore.QRect(x, y, w, h)
+        self.setWindowTitle(self.title)
+
+        self.setWindowIcon(QtGui.QIcon(self.assets_path + '/icons/melody.ico'))
         self.init_vol: int = 70
         self.paused: bool = False
         self.muted: bool = False
@@ -54,6 +61,7 @@ class Form(QWidget):
         self.playlist: List[str] = []
 
         self._init_ui()
+        self.show()
 
     def _init_ui(self) -> None:
         self.layout = QVBoxLayout()
@@ -77,7 +85,17 @@ class Form(QWidget):
         menubar = QMenuBar()
         self.layout.addWidget(menubar)
 
-        file_menu = menubar.addMenu("File")
+        fileMenu = menubar.addMenu('File')
+        fileMenu.addAction('Open', self.browse_file)
+        fileMenu.addSeparator()
+        fileMenu.addAction('Exit', self.close)
+
+
+        helpMenu = menubar.addMenu('Help')
+        helpMenu.addSeparator()
+        helpMenu.addAction('About Us', self.about_us)
+        #toolbar = self.addToolBar('Exit')
+        # toolbar.addAction(self.play_music)
 
     def _statusbar(self) -> None:
         self.statusbar = QStatusBar()
@@ -143,7 +161,11 @@ class Form(QWidget):
         self.middleframe.addWidget(self.pause_button)
 
     def greetings(self) -> None:
+        text = self.edit.text()
+        print('Contents of QLineEdit widget: {}'.format(text))
+        self.statusbar.showMessage(text, timeout=2_000)
 
+    def about_us(self) -> None:
         text = self.edit.text()
         print('Contents of QLineEdit widget: {}'.format(text))
 
@@ -293,9 +315,10 @@ class Form(QWidget):
                 self.playing = False
                 self.play_music()
 
+    def close(self) -> None:
+        sys.exit(1)
 
 if __name__ == "__main__":
-    app = QApplication([])
+    app = QApplication()
     form = Form()
-    form.show()
     sys.exit(app.exec_())

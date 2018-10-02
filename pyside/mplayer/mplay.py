@@ -1,15 +1,4 @@
-    def _menubar(self) -> None:
-        menubar = Menu(self.parent)
-        self.parent.config(menu=menubar)
-        # Create the submenu1
-        subMenu1 = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="File", menu=subMenu1)
-        subMenu1.add_command(label="Open", command=self.browse_file)
-        subMenu1.add_command(label="Exit", command=self.parent.destroy)
-        # Create the submenu2
-        subMenu2 = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Help", menu=subMenu2)
-        subMenu2.add_command(label="About Us", command=self.about_us)
+
 
     def set_vol(self, val: str) -> None:
         vol_float = float(val)
@@ -55,3 +44,8 @@
             if DEBUG: print(e)
         else:
             print('App closed')
+
+        exitAction = QtGui.QAction('Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(self.close)
