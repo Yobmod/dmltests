@@ -1,40 +1,3 @@
-from pygame import mixer
-from mutagen.mp3 import MP3  # ASF, FLAC, MP4, OGG
-import os
-import threading
-import time
-import logging
-from dotenv import load_dotenv
-
-from typing import List, Tuple, Optional as Opt, Union      # type: ignore
-
-
-# set DEBUG and logger
-mplayer_path = os.path.dirname(os.path.abspath(__file__))
-parent_path = os.path.dirname(mplayer_path)
-env_path = os.path.join(parent_path, '.env')
-load_dotenv(env_path)
-DEBUG = os.environ.get("DEBUG") or False
-logger = logging.getLogger()
-if DEBUG: print("DEBUG mode on")
-
-"""def _create_leftframe(self) -> None:
-        self.leftframe = Frame(self.parent)
-        self.leftframe.pack(side=LEFT, padx=30)
-
-        self.playlistbox = Listbox(self.leftframe)
-        self.playlistbox.pack()
-
-        addBtn = Button(self.leftframe, text="+ Add", command=self.browse_file)
-        addBtn.pack(side=LEFT)
-
-        delBtn = Button(self.leftframe, text="- Del", command=self.del_song)
-        delBtn.pack(side=LEFT)
-
-    def _statusbar(self) -> None:
-        self.statusbar = Label(self.parent, text="Welcome to Melody", relief=SUNKEN, anchor=W)
-        self.statusbar.pack(side=BOTTOM, fill=X)
-
     def _menubar(self) -> None:
         menubar = Menu(self.parent)
         self.parent.config(menu=menubar)
@@ -47,78 +10,6 @@ if DEBUG: print("DEBUG mode on")
         subMenu2 = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Help", menu=subMenu2)
         subMenu2.add_command(label="About Us", command=self.about_us)
-
-    def del_song(self) -> None:
-        self.get_selected_song_num()  # update self.selected_song_num
-        if self.selected_song_num is not None:  # if a song is selected
-            if self.playlist[self.selected_song_num] == self.current_song:  # if song is currently playing
-                self.stop_music()                                           # stop it
-            self.playlistbox.delete(self.selected_song_num)  # delete the song from the box
-            self.playlist.pop(self.selected_song_num)        # and playlist
-            # self.selected_song_num remains same, so will play/del next song?
-            self.reset_song()
-            self.selected_song_num = None  # reset self.selected_song_num
-
-    def _create_rightframe(self) -> None:
-        self.rightframe = Frame(self.parent)
-        self.rightframe.pack()
-
-        self.filelabel = Label(self.rightframe, text='Lets make some noise!')
-        self.filelabel.pack(pady=10)
-
-        self.lengthlabel = Label(self.rightframe, text='Total Length : --:--')
-        self.lengthlabel.pack()
-
-        self.currenttimelabel = Label(self.rightframe, text='Current Time : --:--', relief=GROOVE)
-        self.currenttimelabel.pack()
-
-    def start_count(self, total_time: int) -> None:
-
-        current_time = 0
-        while current_time <= total_time and mixer.music.get_busy():  # music.get_busy() -> Returns False when stopped
-            if self.paused:
-                continue  # if paused, infinite loop (don't count)
-            else:
-                mins, secs = divmod(current_time, 60)
-                mins = round(mins)
-                secs = round(secs)
-                timeformat = '{:02d}:{:02d}'.format(mins, secs)
-                self.currenttimelabel['text'] = "Current Time" + ' - ' + timeformat
-                time.sleep(1)
-                current_time += 1
-
-    def reset_song(self) -> None:
-        self.current_song = None
-        self.filelabel['text'] = ""
-        self.lengthlabel['text'] = 'Total Length : --:--'
-        self.currenttimelabel['text'] = "Current Time : --:--"
-        self.statusbar['text'] = ""
-
-    def show_details(self, play_song: str) -> None:
-        self.filelabel['text'] = "Playing" + ' - ' + os.path.basename(play_song)
-        file_data = os.path.splitext(play_song)
-
-        if file_data[1] == '.mp3':
-            audio = MP3(play_song)
-            total_length = audio.info.length
-        elif file_data[1] == '.wav':
-            a = mixer.Sound(play_song)
-            total_length = a.get_length()
-        else:
-            try:
-                a = mixer.Sound(play_song)
-                total_length = a.get_length()
-            except Exception as e:
-                print(e)
-        # div - total_length/60, mod - total_length % 60
-        mins, secs = divmod(total_length, 60)  # returns (time//60, remainder)
-        mins = round(mins)
-        secs = round(secs)
-        timeformat = '{:02d}:{:02d}'.format(mins, secs)
-        self.lengthlabel['text'] = "Total Length" + ' - ' + timeformat
-
-        t1 = threading.Thread(target=self.start_count, args=(total_length, ))
-        t1.start()
 
     def pause_music(self) -> None:
         if self.playing:
@@ -136,39 +27,6 @@ if DEBUG: print("DEBUG mode on")
         except Exception as e:
             messagebox.showerror('File not found, or unknown file type. Please check again.')
             if DEBUG: print(e)
-
-    def play_music(self) -> None:
-        '''if not playing: play, if playing and paused, unpause'''
-        self.get_selected_song_num()  # update self.selected_song_num
-        if self.selected_song_num is not None and self.playlist:
-            play_it: Opt[str] = self.playlist[self.selected_song_num]
-        else:
-            play_it = None
-
-        if not self.playing and play_it:  # if not yet playing, play selected song
-            try:
-                self.stop_music()
-                time.sleep(0.5)
-                mixer.music.load(play_it)
-                mixer.music.play()
-            except Exception as e:
-                messagebox.showerror('File not found, or unknown file type. Please check again.')
-                if DEBUG: print(e)
-            else:
-                self.playing = True
-                self.current_song = play_it
-                self.show_details(play_it)
-                self.statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
-        elif self.playing and self.paused:  # if paused, resume
-            mixer.music.unpause()
-            self.statusbar['text'] = "Music Resumed"
-            self.paused = False
-        elif self.playing and not self.paused:
-            if play_it == self.current_song and play_it is not None:  # if already playing song, do nothing
-                self.statusbar['text'] = "Playing music" + ' - ' + os.path.basename(play_it)
-            else:           # if different song selected, retry
-                self.playing = False
-                self.play_music()
 
     def stop_music(self) -> None:
         if self.playing:
@@ -202,22 +60,6 @@ if DEBUG: print("DEBUG mode on")
             self.scale.set(0)
             self.muted = True
 
-    def _create_middleframe(self) -> None:
-        self.middleframe = Frame(self.rightframe)
-        self.middleframe.pack(pady=30, padx=30)
-
-        self.playPhoto = PhotoImage(file=self.assets_path + '/icons/play.png')
-        playBtn = Button(self.middleframe, image=self.playPhoto, command=self.play_music)
-        playBtn.grid(row=0, column=1, padx=10)
-
-        self.stopPhoto = PhotoImage(file=self.assets_path + '/icons/stop.png')
-        stopBtn = Button(self.middleframe, image=self.stopPhoto, command=self.stop_music)
-        stopBtn.grid(row=0, column=2, padx=10)
-
-        self.pausePhoto = PhotoImage(file=self.assets_path + '/icons/pause.png')
-        pauseBtn = Button(self.middleframe, image=self.pausePhoto, command=self.pause_music)
-        pauseBtn.grid(row=0, column=3, padx=10)
-
     def _create_bottomframe(self) -> None:
         self.bottomframe = Frame(self.rightframe)
         self.bottomframe.pack()
@@ -244,98 +86,3 @@ if DEBUG: print("DEBUG mode on")
             if DEBUG: print(e)
         else:
             print('App closed')
-"""
-
-import sys
-from PySide2.QtWidgets import (QWidget, QApplication, QLineEdit, QMenuBar,
-                               QPushButton, QVBoxLayout, QFileDialog,
-                               # QDialog, QLabel,
-                               )
-
-
-class Form(QWidget):
-    """"""
-
-    def __init__(self, parent: QApplication=None, *, title: str="wooo") -> None:
-        """Constructor"""
-        super().__init__(parent)
-        mixer.init()  # initializethe pygame mixer
-
-        self.assets_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
-
-        if parent is not None:
-            self.parent = parent
-
-        """
-        self.parent.geometry(f'{width}x{height}')
-        self.parent.title(title)
-        self.parent.minsize(width // 2, height // 2)
-        self.parent.iconbitmap(self.assets_path + '/icons/melody.ico')
-        self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
-        """
-        self.init_vol: int = 70
-        self.paused: bool = False
-        self.muted: bool = False
-        self.playing: bool = False
-        self.current_song: Opt[str] = None
-        self.selected_song_num: Opt[int] = None
-        self.playlist: List[str] = []
-
-        self._init_ui()
-
-    def _init_ui(self) -> None:
-        self.layout = QVBoxLayout()
-        self._menubar()
-
-        self.edit = QLineEdit("Write my name here")
-        self.layout.addWidget(self.edit)
-
-        self.greet_button = QPushButton("Show Greetings")
-        self.greet_button.clicked.connect(self.greetings)
-        self.layout.addWidget(self.greet_button)
-
-        self.browse_button = QPushButton("Browse")
-        self.browse_button.clicked.connect(self.browse_file)
-        self.layout.addWidget(self.browse_button)
-
-        self.setLayout(self.layout)
-        """self._statusbar()
-        self._create_leftframe()
-        self._create_rightframe()
-        self._create_middleframe()
-        self._create_bottomframe()"""
-
-    def _menubar(self) -> None:
-        menubar = QMenuBar()
-        self.layout.addWidget(menubar)
-
-        file_menu = menubar.addMenu("File")
-
-    def greetings(self) -> None:
-        """"""
-        text = self.edit.text()
-        print('Contents of QLineEdit widget: {}'.format(text))
-
-    def browse_file(self) -> None:
-        get_filename_path: Tuple[str, str] = QFileDialog.getOpenFileName(self,   # if cancelled, returns ("", "")
-                                                                         "Open Sound File",
-                                                                         self.assets_path,
-                                                                         "Sound Files (*.wav *.mp3 *.ogg)")
-        filename_path = get_filename_path[0]
-        if filename_path:
-            self.add_to_playlist(filename_path)
-            mixer.music.queue(filename_path)
-
-    def add_to_playlist(self, filepath: str) -> None:
-        filename = os.path.basename(filepath)
-        index = 0
-        # self.playlistbox.insert(index, filename)
-        self.playlist.insert(index, filepath)
-        index += 1
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-    form = Form()
-    form.show()
-    sys.exit(app.exec_())
