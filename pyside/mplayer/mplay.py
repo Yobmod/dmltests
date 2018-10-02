@@ -36,14 +36,6 @@
         mixer.music.set_volume(self.init_vol / 100)
         self.scale.grid(row=0, column=2, pady=15, padx=30)
 
-    def on_closing(self) -> None:
-        try:
-            self.stop_music()
-            self.parent.destroy()
-        except Exception as e:
-            if DEBUG: print(e)
-        else:
-            print('App closed')
 
         exitAction = QtGui.QAction('Exit', self)
         exitAction.setShortcut('Ctrl+Q')

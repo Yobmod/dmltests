@@ -263,8 +263,8 @@ class Form(QWidget):
         timeformat = '{:02d}:{:02d}'.format(mins, secs)
         self.lengthlabel.setText("Total Length" + ' - ' + timeformat)
 
-        t1 = threading.Thread(target=self.start_count, args=(total_length, ))
-        t1.start()
+        self.t1 = threading.Thread(target=self.start_count, args=(total_length, ))
+        self.t1.start()
 
     def start_count(self, total_time: int) -> None:
         """"""
@@ -316,9 +316,17 @@ class Form(QWidget):
                 self.play_music()
 
     def close(self) -> None:
-        sys.exit(1)
+        try:
+            self.stop_music()
+            QApplication.closeAllWindows()
+        except Exception as e:
+            sys.exit(1)
+            if DEBUG: print(e)
+        else:
+            print('App closed')
+
 
 if __name__ == "__main__":
-    app = QApplication()
+    app = QApplication(sys.argv)
     form = Form()
     sys.exit(app.exec_())
