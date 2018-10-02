@@ -11,37 +11,6 @@
         menubar.add_cascade(label="Help", menu=subMenu2)
         subMenu2.add_command(label="About Us", command=self.about_us)
 
-    def pause_music(self) -> None:
-        if self.playing:
-            self.paused = True
-            mixer.music.pause()
-            self.statusbar['text'] = "Music Paused"
-
-    def get_selected_song_num(self) -> None:
-        try:
-            selected_song_from_box: Tuple[int] = self.playlistbox.curselection()
-            self.selected_song_num = int(selected_song_from_box[0])
-        except IndexError as e:  # no files in the playlistbox tuple
-            self.statusbar['text'] = "Choose a file from the playlist"
-            if DEBUG: print(e)
-        except Exception as e:
-            messagebox.showerror('File not found, or unknown file type. Please check again.')
-            if DEBUG: print(e)
-
-    def stop_music(self) -> None:
-        if self.playing:
-            self.playing = False
-            self.current_song = None
-            mixer.music.stop()
-            self.statusbar['text'] = "Music Stopped"
-
-    def rewind_music(self) -> None:
-        if self.playing:
-            self.stop_music()
-            time.sleep(0.5)
-            self.play_music()
-            self.statusbar['text'] = "Music Rewound to start"
-
     def set_vol(self, val: str) -> None:
         vol_float = float(val)
         volume = int(vol_float) / 100

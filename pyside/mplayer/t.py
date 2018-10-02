@@ -3,6 +3,7 @@ from PySide2.QtWidgets import (QWidget, QApplication, QLineEdit, QMenuBar, QStat
                                QPushButton, QVBoxLayout, QFileDialog, QListWidget, QLabel,
                                # QDialog, QListWidgetItem,
                                )
+from PySide2 import QtGui, QtCore
 from pygame import mixer
 from mutagen.mp3 import MP3  # ASF, FLAC, MP4, OGG
 import os
@@ -102,6 +103,9 @@ class Form(QWidget):
         self.layout.addLayout(self.leftframe)
 
         self.playlistbox = QListWidget(self)
+        self.playlistbox.setToolTip('''PlayListBox:
+                                    Select song from list to play.
+                                    Use browse or delete buttons to change playlist''')
         self.leftframe.addWidget(self.playlistbox)
 
         self.browse_button = QPushButton("Browse")
@@ -118,21 +122,25 @@ class Form(QWidget):
 
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.play_music)
+        play_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/play.png'))
+        # play_icon.addPixmap(QtGui.QPixmap(self.assets_path + '/icons/play.png'))
+        self.play_button.setIcon(play_icon)
+        # self.play_button.setIconSize(QtCore.QSize(100, 100))
         self.middleframe.addWidget(self.play_button)
 
         self.stop_button = QPushButton("Stop")
-        # self.stop_button.clicked.connect(self.stop_music)
+        self.stop_button.clicked.connect(self.stop_music)
+        stop_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/stop.png'))
+        self.stop_button.setIcon(stop_icon)
+        # self.stop_button.setIconSize(QtCore.QSize(100, 100))
         self.middleframe.addWidget(self.stop_button)
 
         self.pause_button = QPushButton("Pause")
-        # self.pause_button.clicked.connect(self.pause_music)
+        self.pause_button.clicked.connect(self.pause_music)
+        pause_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/pause.png'))
+        self.pause_button.setIcon(pause_icon)
+        # self.pause_button.setIconSize(QtCore.QSize(100, 100))
         self.middleframe.addWidget(self.pause_button)
-        """
-        self.playPhoto = PhotoImage(file=self.assets_path + '/icons/play.png')
-        self.stopPhoto = PhotoImage(file=self.assets_path + '/icons/stop.png')
-        self.pausePhoto = PhotoImage(file=self.assets_path + '/icons/pause.png')
-
-        """
 
     def greetings(self) -> None:
 
@@ -179,16 +187,29 @@ class Form(QWidget):
                 self.selected_song: str = selected_song_from_box.text()  # get items text
                 self.selected_song_num: int = self.playlistbox.currentRow()
             else:
-                self.statusbar.showMessage("Choose a file from the playlist", timeout=3_000)
+                self.statusbar.showMessage("Choose a file from the playlist", timeout=2_000)
         else:
-            self.statusbar.showMessage("No files loaded to playlist", timeout=3_000)
+            self.statusbar.showMessage("No files loaded to playlist", timeout=2_000)
 
     def stop_music(self) -> None:
         if self.playing:
             self.playing = False
             self.current_song = None
             mixer.music.stop()
-            # self.statusbar['text'] = "Music Stopped"
+            self.statusbar.showMessage("Music Stopped", timeout=5_000)
+
+    def pause_music(self) -> None:
+        if self.playing:
+            self.paused = True
+            mixer.music.pause()
+            self.statusbar.showMessage("Music paused", timeout=0)
+
+    def rewind_music(self) -> None:
+        if self.playing:
+            self.stop_music()
+            time.sleep(0.5)
+            self.play_music()
+            self.statusbar.showMessage("Music Rewound to start", timeout=1_000)
 
     def reset_song(self) -> None:
         self.current_song = None
@@ -262,7 +283,8 @@ class Form(QWidget):
                 self.statusbar.showMessage("Playing music" + ' - ' + os.path.basename(play_it))
         elif self.playing and self.paused:  # if paused, resume
             mixer.music.unpause()
-            self.statusbar.showMessage("Music Resumed")
+            # self.statusbar.showMessage("Playing music" + ' - ' + os.path.basename(play_it))
+            self.statusbar.showMessage("Music Resumed", timeout=1_000)
             self.paused = False
         elif self.playing and not self.paused:
             if play_it == self.current_song and play_it is not None:  # if already playing song, do nothing
