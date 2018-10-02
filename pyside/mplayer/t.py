@@ -1,6 +1,6 @@
 import sys
 from PySide2.QtWidgets import (QWidget, QApplication, QLineEdit, QMenuBar, QStatusBar,
-                               QPushButton, QVBoxLayout, QFileDialog, QListWidget, QLabel,
+                               QPushButton, QVBoxLayout, QFileDialog, QListWidget, QLabel, QSlider,
                                # QDialog, QListWidgetItem,
                                )
 from PySide2 import QtGui, QtCore
@@ -28,8 +28,8 @@ if DEBUG: print("DEBUG mode on")
 class Form(QWidget):
     """"""
 
-    def __init__(self, parent: QApplication=None, *, 
-        title: str="wooo", width=400, height= 600, ) -> None:
+    def __init__(self, parent: QApplication = None, *,
+                 title: str = "wooo", width: int = 400, height: int = 600, ) -> None:
         """Constructor"""
         super().__init__(parent)
         mixer.init()  # initializethe pygame mixer
@@ -70,6 +70,7 @@ class Form(QWidget):
         self._create_rightframe()
         self._create_middleframe()
         self._create_leftframe()
+        self._create_bottomframe()
 
         self.edit = QLineEdit("Write my name here")
         self.layout.addWidget(self.edit)
@@ -90,11 +91,10 @@ class Form(QWidget):
         fileMenu.addSeparator()
         fileMenu.addAction('Exit', self.close)
 
-
         helpMenu = menubar.addMenu('Help')
         helpMenu.addSeparator()
         helpMenu.addAction('About Us', self.about_us)
-        #toolbar = self.addToolBar('Exit')
+        # toolbar = self.addToolBar('Exit')
         # toolbar.addAction(self.play_music)
 
     def _statusbar(self) -> None:
@@ -159,6 +159,58 @@ class Form(QWidget):
         self.pause_button.setIcon(pause_icon)
         # self.pause_button.setIconSize(QtCore.QSize(100, 100))
         self.middleframe.addWidget(self.pause_button)
+
+    def _create_bottomframe(self) -> None:
+        self.bottomframe = QVBoxLayout()
+        self.layout.addLayout(self.bottomframe)
+
+        self.volume_button = QPushButton("Mute")
+        self.mute_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/mute.png'))
+        self.volume_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/volume.png'))
+        self.volume_button.setIcon(self.volume_icon)
+        # self.volume_button.setIconSize(QtCore.QSize(100, 100))
+        self.volume_button.clicked.connect(self.mute_music)
+        self.bottomframe.addWidget(self.volume_button)
+
+        self.rewind_button = QPushButton("Rewind")
+        rewind_icon = QtGui.QIcon(QtGui.QPixmap(self.assets_path + '/icons/rewind.png'))
+        self.rewind_button.setIcon(rewind_icon)
+        # self.volume_button.setIconSize(QtCore.QSize(100, 100))
+        self.play_button.clicked.connect(self.rewind_music)
+        self.bottomframe.addWidget(self.rewind_button)
+
+        self.vol_scale = QSlider(QtCore.Qt.Horizontal)
+        self.vol_scale.setMinimum(0)
+        self.vol_scale.setMaximum(100)
+        # self.vol_scale.setTickPosition(QSlider.TicksBelow)
+        # self.vol_scale.setTickInterval(5)
+        self.vol_scale.setValue(self.init_vol)
+        self.vol_scale.valueChanged.connect(self.set_vol)
+        self.bottomframe.addWidget(self.vol_scale)
+        mixer.music.set_volume(self.vol_scale.value())
+
+        # exitAction = QtGui.QAction('Exit', self)
+        # exitAction.setShortcut('Ctrl+Q')
+        # exitAction.setStatusTip('Exit application')
+        # exitAction.triggered.connect(self.close)
+
+    def set_vol(self) -> None:
+        self.vol_from_slider: int = self.vol_scale.value()
+        volume_percent: float = self.vol_from_slider / 100
+        mixer.music.set_volume(volume_percent)  # from 0 to 1
+
+    def mute_music(self) -> None:
+        if self.muted:  # Unmute the music
+            mixer.music.set_volume(self.vol_pre_mute / 100)
+            self.volume_button.setIcon(self.volume_icon)
+            self.vol_scale.setValue(self.vol_pre_mute)  # (self.vol_from_slider)
+            self.muted = False
+        else:  # mute the music
+            self.vol_pre_mute: int = self.vol_scale.value()
+            mixer.music.set_volume(0)
+            self.volume_button.setIcon(self.mute_icon)
+            self.vol_scale.setValue(0)
+            self.muted = True
 
     def greetings(self) -> None:
         text = self.edit.text()
