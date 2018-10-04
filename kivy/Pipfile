@@ -4,9 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Pygame = "*"
+"kivy.deps.angle" = "*"
+"kivy.deps.glew" = "*"
+"kivy.deps.gstreamer" = "*"
+"kivy.deps.sdl2" = "*"
+Kivy = "*"
 python-dotenv = "*"
-toolz = "*"
 
 [dev-packages]
 pytest = "*"

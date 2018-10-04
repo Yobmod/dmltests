@@ -1,9 +1,9 @@
-import os
+
 import random
 import pygame
 import sys
-from pygame.locals import *
 from pygame.locals import QUIT, K_ESCAPE, KEYUP, MOUSEMOTION, MOUSEBUTTONUP
+# import os
 # import dotenv
 # import toolz
 # import itertools
@@ -12,7 +12,14 @@ from pygame.locals import QUIT, K_ESCAPE, KEYUP, MOUSEMOTION, MOUSEBUTTONUP
 # from mypy_extensions import TypedDict
 # from types import MappingProxyType
 
-from typing import Mapping, Dict, Union, List, Tuple, Any, Optional as Opt
+from typing import (Union,
+                    # Optional as Opt,
+                    # Mapping,
+                    # Dict,
+                    List,
+                    Tuple,
+                    # Any,
+                    )
 
 iconType = Tuple[str, Tuple[int, int, int]]
 boardType = List[List[iconType]]
@@ -57,6 +64,7 @@ ALLCOLORS: Tuple[Tuple[int, int, int], ...] = (RED, GREEN, BLUE, YELLOW, ORANGE,
 ALLSHAPES: Tuple[str, str, str, str, str] = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
 assert len(ALLCOLORS) * len(ALLSHAPES) * 2 >= BOARDWIDTH * BOARDHEIGHT, "Board is too big for the number of shapes/colors defined."
 
+
 class MemoryGame():
     """"""
 
@@ -65,18 +73,17 @@ class MemoryGame():
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         self.board = self.getRandomizedBoard()
         pygame.init()
+        pygame.display.set_caption('Memory Game')
+        self.DISPLAYSURF.fill(BGCOLOR)
 
     def main(self) -> None:
         mousex = 0  # used to store x coordinate of mouse event
         mousey = 0  # used to store y coordinate of mouse event
-        pygame.display.set_caption('Memory Game')
 
         mainBoard = self.getRandomizedBoard()
         revealedBoxes = self.generateRevealedBoxesData(False)
 
         firstSelection = None  # stores the (x, y) of the first box clicked.
-
-        self.DISPLAYSURF.fill(BGCOLOR)
         self.startGameAnimation(mainBoard)
 
         while True:  # main game loop
@@ -137,13 +144,11 @@ class MemoryGame():
             pygame.display.update()
             self.FPSCLOCK.tick(FPS)
 
-
     def generateRevealedBoxesData(self, val: bool) -> List[List[bool]]:
         revealedBoxes = []
         for i in range(BOARDWIDTH):
             revealedBoxes.append([val] * BOARDHEIGHT)
         return revealedBoxes
-
 
     def getRandomizedBoard(self) -> boardType:
         # Get a list of every possible shape in every possible color.
@@ -168,7 +173,6 @@ class MemoryGame():
             board.append(column)
         return board
 
-
     def splitBoxesIntoGroupsOf(self, groupSize: int, theList: List[boxType]) -> List[List[boxType]]:
         # splits a list into a list of lists, where the inner lists have at
         # most groupSize number of items.
@@ -177,13 +181,11 @@ class MemoryGame():
             result.append(theList[i:i + groupSize])
         return result
 
-
     def leftTopCoordsOfBox(self, boxx: int, boxy: int) -> Tuple[int, int]:
         # Convert board coordinates to pixel coordinates
         left = boxx * (BOXSIZE + GAPSIZE) + XMARGIN
         top = boxy * (BOXSIZE + GAPSIZE) + YMARGIN
         return (left, top)
-
 
     def getBoxAtPixel(self, x: int, y: int) -> Union[boxType, Tuple[None, None]]:
         for boxx in range(BOARDWIDTH):
@@ -193,7 +195,6 @@ class MemoryGame():
                 if boxRect.collidepoint(x, y):
                     return (boxx, boxy)
         return (None, None)
-
 
     def drawIcon(self, shape: str, color: Tuple[int, int, int], boxx: int, boxy: int) -> None:
         quarter = int(BOXSIZE * 0.25)  # syntactic sugar
@@ -208,7 +209,7 @@ class MemoryGame():
             pygame.draw.rect(self.DISPLAYSURF, color, (left + quarter, top + quarter, BOXSIZE - half, BOXSIZE - half))
         elif shape == DIAMOND:
             pygame.draw.polygon(self.DISPLAYSURF, color, ((left + half, top), (left + BOXSIZE - 1, top + half),
-                                                    (left + half, top + BOXSIZE - 1), (left, top + half)))
+                                                          (left + half, top + BOXSIZE - 1), (left, top + half)))
         elif shape == LINES:
             for i in range(0, BOXSIZE, 4):
                 pygame.draw.line(self.DISPLAYSURF, color, (left, top + i), (left + i, top))
@@ -216,12 +217,10 @@ class MemoryGame():
         elif shape == OVAL:
             pygame.draw.ellipse(self.DISPLAYSURF, color, (left, top + quarter, BOXSIZE, half))
 
-
     def getShapeAndColor(self, board: boardType, boxx: int, boxy: int) -> iconType:
         board_shape = board[boxx][boxy][0]
         board_color = board[boxx][boxy][1]
         return (board_shape, board_color)
-
 
     def drawBoxCovers(self, board: boardType, boxes: List[boxType], coverage: int) -> None:
         # Draws boxes being covered/revealed. "boxes" is a list
@@ -236,18 +235,15 @@ class MemoryGame():
         pygame.display.update()
         self.FPSCLOCK.tick(FPS)
 
-
     def revealBoxesAnimation(self, board: boardType, boxesToReveal: List[boxType]) -> None:
         # Do the "box reveal" animation.
         for coverage in range(BOXSIZE, (-REVEALSPEED) - 1, -REVEALSPEED):
             self.drawBoxCovers(board, boxesToReveal, coverage)
 
-
     def coverBoxesAnimation(self, board: boardType, boxesToCover: List[boxType]) -> None:
         # Do the "box cover" animation.
         for coverage in range(0, BOXSIZE + REVEALSPEED, REVEALSPEED):
             self.drawBoxCovers(board, boxesToCover, coverage)
-
 
     def drawBoard(self, board: boardType, revealed: List[List[bool]]) -> None:
         # Draws all of the boxes in their covered or revealed state.
@@ -262,11 +258,9 @@ class MemoryGame():
                     shape, color = self.getShapeAndColor(board, boxx, boxy)
                     self.drawIcon(shape, color, boxx, boxy)
 
-
     def drawHighlightBox(self, boxx: int, boxy: int) -> None:
         left, top = self.leftTopCoordsOfBox(boxx, boxy)
         pygame.draw.rect(self.DISPLAYSURF, HIGHLIGHTCOLOR, (left - 5, top - 5, BOXSIZE + 10, BOXSIZE + 10), 4)
-
 
     def startGameAnimation(self, board: boardType) -> None:
         # Randomly reveal the boxes 8 at a time.
@@ -283,7 +277,6 @@ class MemoryGame():
             self.revealBoxesAnimation(board, boxGroup)
             self.coverBoxesAnimation(board, boxGroup)
 
-
     def gameWonAnimation(self, board: boardType) -> None:
         # flash the background color when the player has won
         coveredBoxes = self.generateRevealedBoxesData(True)
@@ -296,7 +289,6 @@ class MemoryGame():
             self.drawBoard(board, coveredBoxes)
             pygame.display.update()
             pygame.time.wait(300)
-
 
     def hasWon(self, revealedBoxes: List[List[bool]]) -> bool:
         # Returns True if all the boxes have been revealed, otherwise False
