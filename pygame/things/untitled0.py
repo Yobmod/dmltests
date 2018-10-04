@@ -1,6 +1,9 @@
 import random
 
-def main():
+difficulty: str
+
+def main() -> int:
+    global difficulty
     difficulty = input("Enter a difficulty level: 'easy','medium', or 'hard' : ")
     
     print("At any time, type 'hint' to get a hint")
@@ -16,8 +19,8 @@ def main():
     return randomNumber
     
 randomNumber = main()
-found = False
 
+found = False
 while not found:
     if difficulty == "easy":
         guess = int(input("Guess a number between 1 and 100"))

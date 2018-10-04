@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+kivy-garden = "*"
+"kivy.deps.angle" = "*"
+"kivy.deps.glew" = "*"
+"kivy.deps.gstreamer" = "*"
+"kivy.deps.sdl2" = "*"
+Cython = "*"
+Kivy = "*"
+Pygame = "*"
+python-dotenv = "*"
+toolz = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-sugar = "*"
+pytest-xdist = "*"
+flake8 = "*"
+pylama = "*"
+mypy = "*"
+autopep8 = "*"
+pyinstaller = "*"
+pipenv = "*"
+
+[requires]
+python_version = "3.6"
