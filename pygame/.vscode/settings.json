@@ -1,5 +1,6 @@
 {
-    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\pygame-xfHBFv92\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\WPy37\\settings\\.virtualenvs\\pygame-xfHBFv92\\Scripts\\python.exe",
+    "python.venvPath": "C:\\WPy37\\settings\\.virtualenvs",
     "python.linting.mypyEnabled": true,
 "python.linting.enabled": true,
 "python.linting.pydocstyleEnabled": false,
@@ -49,15 +50,9 @@
 "python.jediEnabled": false,
 "python.jediMemoryLimit": -1,
 
-    "python.unitTest.promptToConfigure": true,
+    "python.unitTest.promptToConfigure": false,
     "python.unitTest.nosetestsEnabled": false,
     "python.unitTest.unittestEnabled": false,
-    "python.unitTest.unittestArgs": [
-        "-s",
-        "./myplayer",
-        "-p",
-        "test*.py",
-    ],
     "python.unitTest.pyTestEnabled": true,
     "todohighlight.keywords": [
         {

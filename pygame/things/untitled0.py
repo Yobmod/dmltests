@@ -2,22 +2,24 @@ import random
 
 difficulty: str
 
+
 def main() -> int:
     global difficulty
     difficulty = input("Enter a difficulty level: 'easy','medium', or 'hard' : ")
-    
+
     print("At any time, type 'hint' to get a hint")
     if difficulty == "easy":
-        randomNumber = random.randint(1,100)
-    
+        randomNumber = random.randint(1, 100)
+
     elif difficulty == "medium":
-        randomNumber = random.randint(1,10000)
-    
+        randomNumber = random.randint(1, 10000)
+
     elif difficulty == "hard":
-        randomNumber = random.randint(1,1000000)
-    
+        randomNumber = random.randint(1, 1000000)
+
     return randomNumber
-    
+
+
 randomNumber = main()
 
 found = False
@@ -30,6 +32,5 @@ while not found:
         elif guess == randomNumber:
             print("Thats correct!!")
             found = True
-        else :
+        else:
             print("Too Low")
-                

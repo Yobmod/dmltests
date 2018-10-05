@@ -13,7 +13,7 @@ from pygame.locals import QUIT, K_ESCAPE, KEYUP, MOUSEMOTION, MOUSEBUTTONUP
 # from types import MappingProxyType
 
 from typing import (Union,
-                    # Optional as Opt,
+                    Optional as Opt,
                     # Mapping,
                     # Dict,
                     List,
@@ -31,8 +31,8 @@ WINDOWHEIGHT = 480  # size of windows' height in pixels
 REVEALSPEED = 8  # speed boxes' sliding reveals and covers
 BOXSIZE = 40  # size of box height & width in pixels
 GAPSIZE = 10  # size of gap between boxes in pixels
-BOARDWIDTH = 10  # number of columns of icons
-BOARDHEIGHT = 7  # number of rows of icons
+BOARDWIDTH = 3  # number of columns of icons
+BOARDHEIGHT = 2  # number of rows of icons
 assert (BOARDWIDTH * BOARDHEIGHT) % 2 == 0, 'Board needs to have an even number of boxes for pairs of matches.'
 XMARGIN = int((WINDOWWIDTH - (BOARDWIDTH * (BOXSIZE + GAPSIZE))) / 2)
 YMARGIN = int((WINDOWHEIGHT - (BOARDHEIGHT * (BOXSIZE + GAPSIZE))) / 2)
@@ -83,7 +83,7 @@ class MemoryGame():
         mainBoard = self.getRandomizedBoard()
         revealedBoxes = self.generateRevealedBoxesData(False)
 
-        firstSelection = None  # stores the (x, y) of the first box clicked.
+        firstSelection: Opt[Tuple[int, int]] = None  # stores the (x, y) of the first box clicked.
         self.startGameAnimation(mainBoard)
 
         while True:  # main game loop
@@ -103,50 +103,61 @@ class MemoryGame():
                     mouseClicked = True
 
             boxx, boxy = self.getBoxAtPixel(mousex, mousey)
-            if boxx is not None and boxy is not None:
-                # The mouse is currently over a box.
-                if not revealedBoxes[boxx][boxy]:
-                    self.drawHighlightBox(boxx, boxy)
-                if not revealedBoxes[boxx][boxy] and mouseClicked:
-                    self.revealBoxesAnimation(mainBoard, [(boxx, boxy)])
+            if boxx is not None and boxy is not None:  # The mouse is currently over a box.
+                if not revealedBoxes[boxx][boxy]:  # and box is not already revealed
+                    self.drawHighlightBox(boxx, boxy)  # draw highlight on box
+
+                if not revealedBoxes[boxx][boxy] and mouseClicked:  # ifbox is not already revealed and clicked on
+                    self.revealBoxesAnimation(mainBoard, [(boxx, boxy)])  # reveal the box
                     revealedBoxes[boxx][boxy] = True  # set the box as "revealed"
                     if firstSelection is None:  # the current box was the first box clicked
                         firstSelection = (boxx, boxy)
                     else:  # the current box was the second box clicked
+                        secondSelection = (boxx, boxy)
+                        got_a_match = self.check_match(mainBoard, firstSelection, secondSelection)
                         # Check if there is a match between the two icons.
-                        icon1shape, icon1color = self.getShapeAndColor(mainBoard, firstSelection[0], firstSelection[1])
-                        icon2shape, icon2color = self.getShapeAndColor(mainBoard, boxx, boxy)
+                        if got_a_match is False:
+                            self.no_match_reset(mainBoard, revealedBoxes, firstSelection, secondSelection)
+                        elif self.hasWon(revealedBoxes):  # if there is a match, check if all pairs found
+                            self.win_reset(mainBoard)  # show win animaition TODO ask to play again
 
-                        if icon1shape != icon2shape or icon1color != icon2color:
-                            # Icons don't match. Re-cover up both selections.
-                            pygame.time.wait(1000)  # 1000 milliseconds = 1 sec
-                            self.coverBoxesAnimation(mainBoard, [(firstSelection[0], firstSelection[1]), (boxx, boxy)])
-                            revealedBoxes[firstSelection[0]][firstSelection[1]] = False
-                            revealedBoxes[boxx][boxy] = False
-                        elif self.hasWon(revealedBoxes):  # check if all pairs found
-                            self.gameWonAnimation(mainBoard)
-                            pygame.time.wait(2000)
-
-                            # Reset the board
-                            mainBoard = self.getRandomizedBoard()
-                            revealedBoxes = self.generateRevealedBoxesData(False)
-
-                            # Show the fully unrevealed board for a second.
-                            self.drawBoard(mainBoard, revealedBoxes)
-                            pygame.display.update()
-                            pygame.time.wait(1000)
-
-                            # Replay the start game animation.
-                            self.startGameAnimation(mainBoard)
+                            play_again = True
+                            if play_again:
+                                mainBoard = self.getRandomizedBoard()  # Reset the board
+                                revealedBoxes = self.generateRevealedBoxesData(False)
+                                self.drawBoard(mainBoard, revealedBoxes)  # Show the fully unrevealed board for a second.
+                                pygame.display.update()
+                                pygame.time.wait(1000)
+                                self.startGameAnimation(mainBoard)    # Replay the start game animation.
+                            else:
+                                break  # TODO
                         firstSelection = None  # reset firstSelection variable
 
             # Redraw the screen and wait a clock tick.
             pygame.display.update()
             self.FPSCLOCK.tick(FPS)
 
+    def check_match(self, board: boardType, firstbox: boxType, secondbox: boxType) -> bool:
+        icon1shape, icon1color = self.getShapeAndColor(board, firstbox[0], firstbox[1])
+        icon2shape, icon2color = self.getShapeAndColor(board, secondbox[0], secondbox[1])
+        if icon1shape != icon2shape or icon1color != icon2color:  # no match!
+            return False
+        else:
+            return True
+
+    def no_match_reset(self, board: boardType, revealed: List[List[bool]], firstbox: boxType, secondbox: boxType) -> None:
+        pygame.time.wait(1000)  # leave failed match revealed 1 sec  TODO alter with difficulty
+        self.coverBoxesAnimation(board, [(firstbox[0], firstbox[1]), (secondbox[0], secondbox[1])], )
+        revealed[firstbox[0]][firstbox[1]] = False
+        revealed[secondbox[0]][secondbox[1]] = False  # set the 2 failed match boxes to hidden
+
+    def win_reset(self, board: boardType) -> None:
+        self.gameWonAnimation(board)
+        pygame.time.wait(2000)
+
     def generateRevealedBoxesData(self, val: bool) -> List[List[bool]]:
         revealedBoxes = []
-        for i in range(BOARDWIDTH):
+        for _ in range(BOARDWIDTH):
             revealedBoxes.append([val] * BOARDHEIGHT)
         return revealedBoxes
 
@@ -165,9 +176,9 @@ class MemoryGame():
 
         # Create the board data structure, with randomly placed icons.
         board: boardType = []
-        for x in range(BOARDWIDTH):
+        for _ in range(BOARDWIDTH):
             column: List[iconType] = []
-            for y in range(BOARDHEIGHT):
+            for __ in range(BOARDHEIGHT):
                 column.append(icons[0])
                 del icons[0]  # remove the icons as we assign them
             board.append(column)
@@ -283,7 +294,7 @@ class MemoryGame():
         color1 = LIGHTBGCOLOR
         color2 = BGCOLOR
 
-        for i in range(13):
+        for _ in range(13):
             color1, color2 = color2, color1  # swap colors
             self.DISPLAYSURF.fill(color1)
             self.drawBoard(board, coveredBoxes)
