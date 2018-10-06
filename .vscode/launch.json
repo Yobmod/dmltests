@@ -29,8 +29,8 @@
             ]
         },
         {
-            "name": "Python Experimental: Current File (Integrated Terminal)",
-            "type": "pythonExperimental",
+            "name": "Python: Current File (Integrated Terminal)",
+            "type": "python",
             "request": "launch",
             "pythonPath": "${config:python.pythonPath}",
             "program": "${file}",
@@ -42,8 +42,8 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "Python Experimental: Django",
-            "type": "pythonExperimental",
+            "name": "Python: Django",
+            "type": "python",
             "request": "launch",
             "pythonPath": "${config:python.pythonPath}",
             "program": "${workspaceFolder}/manage.py",
@@ -60,8 +60,8 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "Python Experimental: Current File (External Terminal)",
-            "type": "pythonExperimental",
+            "name": "Python: Current File (External Terminal)",
+            "type": "python",
             "request": "launch",
             "pythonPath": "${config:python.pythonPath}",
             "program": "${file}",

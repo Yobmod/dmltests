@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Pygame = "*"
+python-dotenv = "*"
+toolz = "*"
+
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-sugar = "*"
+pytest-xdist = "*"
+flake8 = "*"
+pylama = "*"
+pycodestyle = "*"
+mypy = "*"
+autopep8 = "*"
+pyinstaller = "*"
+pipenv = "*"
+mccabe = "*"
+
+[requires]
+python_version = "3.7"

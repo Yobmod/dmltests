@@ -1,6 +1,13 @@
 {
     "C_Cpp.intelliSenseEngineFallback": "Disabled",
-    "python.linting.enabled": false,
-    "python.linting.flake8Enabled": false,
-    "python.pythonPath": "C:\\ProgramData\\Anaconda3\\python.exe"
+
+    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\pygame-xfHBFv92\\Scripts\\python.exe",
+    "python.venvPath": "C:\\Users\\laventin.LANCS\\.virtualenvs",
+    "python.formatting.provider": "autopep8",
+
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylamaEnabled": true,
+        "python.linting.pylintEnabled": false,
 }
