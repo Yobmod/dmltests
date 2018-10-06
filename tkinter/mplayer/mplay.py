@@ -154,8 +154,8 @@ class Mplay(Frame):
                 a = mixer.Sound(play_song)
                 total_length = a.get_length()
             except Exception as e:
-                print(e)
-        # div - total_length/60, mod - total_length % 60
+                print(e, "not a supported file type? e.g. .wav, .mp3")
+
         mins, secs = divmod(total_length, 60)  # returns (time//60, remainder)
         mins = round(mins)
         secs = round(secs)
