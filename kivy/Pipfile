@@ -22,6 +22,9 @@ mypy = "*"
 autopep8 = "*"
 pyinstaller = "*"
 pipenv = "*"
+pip = "==18.0"
+python-for-android = "*"  # linux only
+sh = "*"                  # linux only
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
