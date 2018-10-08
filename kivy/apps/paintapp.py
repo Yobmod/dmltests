@@ -15,7 +15,7 @@ KIVY_MODULES_DIR = os.environ['KIVY_DATA_DIR'] or './modules'
 import kivy                             # noqa: E402
 kivy.require("1.10.0")
 
-from typing import Any, Dict            # noqa: E402
+from typing import Any, Dict  # , Union, overload            # noqa: E402
 from kivy.input import MotionEvent      # noqa: E402
 
 
@@ -40,6 +40,7 @@ class LoginScreen(GridLayout):
 
 
 class PaintWidget(Widget):
+
     def on_touch_down(self, touch: MotionEvent) -> None:
         # print(touch)
         with self.canvas:
@@ -57,7 +58,7 @@ class PaintWidget(Widget):
 
     def on_touch_up(self, touch: MotionEvent) -> None:
         # print("Released", touch)
-        with self.canvas: 
+        with self.canvas:
             d = 30.0
             Ellipse(pos=(touch.x - d / 2, touch.y - d / 2), size=(d, d))
 
@@ -65,20 +66,20 @@ class PaintWidget(Widget):
 class PaintApp(App):
     """"""
 
-    def build(self) -> PaintApp:
+    def build(self) -> Widget:
         # return LoginScreen()
-        parent: PaintApp = Widget()
+        parent: Widget = Widget()
         self.painter = PaintWidget()
         clearbtn = Button(text='Clear')
         clearbtn.bind(on_release=self.clear_canvas)
         parent.add_widget(self.painter)
         parent.add_widget(clearbtn)
         return parent
-    
+
     def clear_canvas(self, obj: Button) -> None:
         self.painter.canvas.clear()
 
 
-
 if __name__ == "__main__":
+    x = PaintApp()
     PaintApp().run()
