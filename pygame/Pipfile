@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 Pygame = "*"
 python-dotenv = "*"
-toolz = "*"
+# toolz = "*"
 
 
 [dev-packages]
@@ -16,8 +16,9 @@ pytest-sugar = "*"
 pytest-xdist = "*"
 flake8 = "*"
 pylama = "*"
-pycodestyle = "*"
+# pycodestyle = "*"
 mypy = "*"
+ mypy-extensions = "*"
 autopep8 = "*"
 pyinstaller = "*"
 pipenv = "*"
