@@ -10,6 +10,7 @@ name = "pypi"
 "kivy.deps.sdl2" = "*"
 Kivy = "*"
 python-dotenv = "*"
+mypy = {editable = true, ref = "master", git = "https://github.com/python/mypy.git"}
 
 [dev-packages]
 pytest = "*"
