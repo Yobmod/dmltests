@@ -1,10 +1,10 @@
 {
-    "python.pythonPath": "C:\\python3\\python.exe",
+    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\kivy-GlUKc20G\\Scripts\\python.exe",
     "python.linting.mypyEnabled": true,
 "python.linting.enabled": true,
 "python.linting.pydocstyleEnabled": false,
 "python.linting.pep8Enabled": false,
-"python.linting.flake8Enabled": true,
+"python.linting.flake8Enabled": false,
 "python.linting.pylamaEnabled": true,
 "python.linting.pylintEnabled": false,
 "editor.fontSize": 16,

@@ -15,7 +15,7 @@ def funct(strg: None) -> None: ...
 def funct() -> None: ...
 
 
-def funct(strg: Opt[Union[str, int, List[str]]]=None) -> Opt[Union[str, int]]:
+def funct(strg: Union[str, int, None, List[str]]=None) -> Opt[Union[str, int]]:
     if strg is None:
         return None
     elif isinstance(strg, str):
@@ -29,6 +29,6 @@ def funct(strg: Opt[Union[str, int, List[str]]]=None) -> Opt[Union[str, int]]:
         return ret_int
 
 
-x = funct(["str"])
+x = funct()
 print(x)
 reveal_type(x)
