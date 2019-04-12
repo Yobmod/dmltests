@@ -4,15 +4,15 @@ import cython
 # from libc.stdint cimport int64_t
 @cython.nogil  # uses threads
 @cython.inline  # substitutes the code whereever the function is called
-@cython.cfunc  # cdef
-def fib(n: cython.int) -> (cython.longlong, cython.longlong):
+@cython.ccall  # cdef
+def fib(n: cython.int) -> cython.longlong:
     a: cython.longlong
     b: cython.longlong
     i: cython.int
     a, b  = 1, 1
     for i in range(n):
        a, b = a+b, a
-    return a, b
+    return a
 
 
 @cython.ccall  # cpdef

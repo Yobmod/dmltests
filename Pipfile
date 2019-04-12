@@ -1,0 +1,30 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "*"
+numpy = "*"
+pygame = "*"
+pyside2 = "*"
+cython = "*"
+opencv-python = "*"
+mypy = "*"
+pytest = "*"
+pipenv = "*"
+autopep8 = "*"
+pylama = "*"
+pytest-cov = "*"
+flake8 = "*"
+mccabe = "*"
+matplotlib = "*"
+keras = "*"
+sklearn = "*"
+numpy-stubs = "*"
+typing-extensions = "*"
+
+[requires]
+python_version = "3.7"

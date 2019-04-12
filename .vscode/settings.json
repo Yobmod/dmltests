@@ -1,13 +1,20 @@
 {
-    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.jediEnabled": false,
+    // "python.analysis.downloadChannel": "beta",
 
-    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\pygame-xfHBFv92\\Scripts\\python.exe",
-    "python.venvPath": "C:\\Users\\laventin.LANCS\\.virtualenvs",
-    "python.formatting.provider": "autopep8",
-
+    
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true,
     "python.linting.mypyEnabled": true,
     "python.linting.pylamaEnabled": true,
-        "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.unitTest.promptToConfigure": false,
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false
+
 }
+
+
+
