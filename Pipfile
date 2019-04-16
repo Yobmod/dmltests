@@ -23,8 +23,8 @@ mccabe = "*"
 matplotlib = "*"
 keras = "*"
 sklearn = "*"
-numpy-stubs = "*"
 typing-extensions = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"
