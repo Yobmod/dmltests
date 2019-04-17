@@ -10,3 +10,6 @@ else:  # python doesnt allow ndarray subscriptable yet
 
 
 colorType = Union[List[int], Tuple[int, int, int, int], Tuple[int, int, int]]
+
+
+"def expand_dims(array: np._ArrayLike[Any], axis: int) -> np.ndarray[np._ArrayLike[Any]]: ..."
