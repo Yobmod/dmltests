@@ -25,6 +25,7 @@ keras = "*"
 sklearn = "*"
 typing-extensions = "*"
 pillow = "*"
+imutils = "*"
 
 [requires]
 python_version = "3.7"
