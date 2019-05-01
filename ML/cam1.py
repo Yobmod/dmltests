@@ -2,7 +2,7 @@
 from datetime import datetime
 import numpy as np
 import cv2
-import imutils
+# import imutils
 import pathlib
 
 from typing import Tuple, Union, List  # , Any, NewType, TypeVar
@@ -28,11 +28,11 @@ def set_res(cap: cv2.VideoCapture, resolution: Union[int, str]) -> str:
 
 cap = cv2.VideoCapture(0)
 
-if cap is True:
+if cap.isOpened() is True:
     print("initialising camera")
 else:
     print("no camera found")
-
+    cap = cv2.VideoCapture(1)
 
 set_res(cap, 480)
 raw_frames = []
@@ -88,41 +88,48 @@ def get_outlined_image(frame: imageType) -> imageType:
 
 
 def crop_outlined_image(frame: imageType) -> imageType:
-    # find contours in the edge map
-    cnts = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
+    """find contours in an edged image, create a mask sized to largest contour and apply to image"""
+    # contours = imutils.grab_contours(resul
+    result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
+    result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = result[0]
+
     # ensure at least one contour was found
-    if len(cnts) > 0:
+    if len(contours) > 0:
         # grab the largest contour, then draw a mask for the pill
-        c = max(cnts, key=cv2.contourArea)
+        # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
+        # c = max(cnt_areas)
+        largest_contour = max(contours, key=cv2.contourArea)
         mask = np.zeros(frame.shape, dtype=np.uint8)
-        cv2.drawContours(mask, [c], -1, 255, -1)  # mask, ?, opacity?, -1 = filled in
+        cv2.drawContours(mask, [largest_contour], -1, 255, -1)  # mask, ?, opacity?, -1 = filled in
 
         # compute its bounding box of pill, then extract the ROI,
         # and apply the mask
-        (x, y, w, h) = cv2.boundingRect(c)
+        (x, y, w, h) = cv2.boundingRect(largest_contour)
         imageROI: imageType = frame[y:y + h, x:x + w]
         maskROI = mask[y:y + h, x:x + w]
         imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
         return imageROI
     else:
-        raise AttributeError
+        raise ValueError("No contours identified in image")
 
 
 def save_image_groups(frames_list: List[imageType]) -> None:
+    # print(frames_list)
     edged_frames: List[imageType] = [get_outlined_image(frame) for frame in frames_list]
-    masked_frames: List[imageType] = [crop_outlined_image(frame) for frame in frames_list]
+    masked_frames: List[imageType] = [crop_outlined_image(frame) for frame in edged_frames]
 
-    now = datetime.now().strftime('%Y%m%d_%H%M%S')
+    today = datetime.today().strftime('%Y_%m_%d')
+    now = datetime.now().strftime('%H%M%S')
 
     for index, frame in enumerate(frames_list):
         # create folder with index number
-        name = pathlib.Path(f'./data/images_{now}_{index}')
+        name = pathlib.Path(f'./data/images_{today}')
         name.mkdir(parents=True, exist_ok=True)
         # save images to folders
-        cv2.imwrite(f'{name}/raw{index}.png', cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        cv2.imwrite(f'{name}/edged{index}.png', edged_frames[index])
-        cv2.imwrite(f'{name}/mask{index}.png', masked_frames[index])
+        cv2.imwrite(f'{name}/{index}_raw_{now}.png', cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        cv2.imwrite(f'{name}/{index}_edged_{now}.png', edged_frames[index])
+        cv2.imwrite(f'{name}/{index}_mask_{now}.png', masked_frames[index])
 
 
 save_image_groups(raw_frames)

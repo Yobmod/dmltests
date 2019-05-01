@@ -7,6 +7,7 @@
 */dist
 /build
 /dist
+*/data
 
 *.pyc
 __pycache__

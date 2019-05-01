@@ -5,10 +5,10 @@ name = "pypi"
 
 [packages]
 cython = "*"
-pip = "==18.0"
+pip = 18.0
 
 [dev-packages]
 mypy = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.7.3"
