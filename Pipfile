@@ -29,6 +29,7 @@ sklearn = "*"
 typing-extensions = "*"
 pillow = "*"
 imutils = "*"
+pysmartthings = "*"
 
 [requires]
 python_version = "3.7"
