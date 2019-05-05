@@ -1,3 +1,9 @@
 {
-    "python.pythonPath": "C:\\WPy37\\python-3.7.0\\python.exe"
+    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pyTestEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylamaEnabled": true,
 }
