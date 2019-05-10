@@ -38,7 +38,7 @@ def get_outlined_image(frame: imageType) -> imageType:
     return edged
 
 
-def find_x_extremes(frame: imageType) -> float:
+def get_contour_lims(frame: imageType) -> Tuple[int, int, int, int]:
     "get left and right most pixels in edged image"
     result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
     result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -49,22 +49,27 @@ def find_x_extremes(frame: imageType) -> float:
         # c = max(cnt_areas)
         largest_contour = max(contours, key=cv2.contourArea)
         (x, y, w, h) = cv2.boundingRect(largest_contour)
-        print((x, y, w, h))
-
-        drop_h = h / 2
-        radius = (drop_h / 2) + (w * w / 8 * h)
-        opp = radius - drop_h
-        hyp = radius
-        sin_ca = opp / hyp
-        ca = math.degrees(math.asin(sin_ca))
-        print(ca)
-
-        opp = h / 2
-        ajd = w / 2
-        tan_angle = opp / ajd
-        angle = math.degrees(math.atan(tan_angle))
     else:
         raise ValueError("No contours identified in image")
+    return (x, y, w, h)
+
+
+def calc_contact_angle(w: int, h: int) -> float:
+    drop_h = h / 2
+    radius = (drop_h / 2) + ((w * w) / (8 * drop_h))
+    opp = radius - drop_h
+    hyp = radius
+    sin_ca = opp / hyp
+    ca = 90 - math.degrees(math.asin(sin_ca))
+    # print(f"drop_h={drop_h}, drop_w={w}, model_rad={radius}, angle={ca}")
+    return ca
+
+
+def drop_params(w: int, h: int) -> float:
+    opp = h / 2
+    ajd = w / 2
+    tan_angle = opp / ajd
+    angle = math.degrees(math.atan(tan_angle))
     return angle
 
 
@@ -122,10 +127,10 @@ def save_image_groups(frames_list: List[imageType], save_folder: str = "data", r
 def add_image_text(image: imageType, text: str, underline: bool = False) -> imageType:
     """add text to image """
 
-    text_image = cv2.cvtColor(image.copy(), cv2.COLOR_GRAY2RGB)
+    text_image: imageType = cv2.cvtColor(image.copy(), cv2.COLOR_GRAY2RGB)
     h, w = text_image.shape[:2]
     text_font = cv2.FONT_HERSHEY_SIMPLEX
-    text_origin_pos = (int(w/10), int(9*h/10))  # from topleft
+    text_origin_pos = (int(w / 10), int(9 * h / 10))  # from topleft
     text_scale = 0.4
     text_color = (154, 205, 50)
     text_line_thick = 1
