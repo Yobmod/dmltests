@@ -1,0 +1,18 @@
+[
+  "pygame/gamer/test_memorygame.py::TestCaseGame::test_1",
+  "pyside/mplayer/tests.py::TestMplayer::test1",
+  "pyside/mplayer/tests.py::TestMplayer::test_init_values",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::Test_Countlines::test_input",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::Test_Countlines::test_bad_input",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::Test_Countlines::test_output_type",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestPyJsCLines::test_py_output_type",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestPyJsCLines::test_js_output_type",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestPyJsCLines::test_c_output_type",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_typeLines_print_output",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_bad_input",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_ext_tuple_input_type",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_ext_tuple_input_tup",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_exclude_list",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_typeLines_output",
+  "python/LineOfCodeCount/tests/LOC_count_test.py::TestTypeLines::test_typeLines_input"
+]
