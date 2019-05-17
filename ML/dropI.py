@@ -1,33 +1,48 @@
 """."""
 # -*- coding: utf-8 -*-
 import cv2
-import PIL
+from PIL import Image, ImageFont, ImageDraw
 
-from dmlutils import add_image_text, get_outlined_image, crop_outlined_image, save_image_groups, find_x_extremes  # set_res
+from dmlutils import get_outlined_image, crop_outlined_image, get_contour_lims, calc_contact_angle  # set_res
 
-from mytypes import imageType
+from mytypes import imageType, colorType
 
 
 # raw_frames: t.List[imageType] = []
 
 img: imageType = cv2.imread(R'.\data\test.png', cv2.IMREAD_COLOR)  # cv2.IMREAD_GRAYSCALE  /  cv2.IMREAD_UNCHANGED
 
-while img is True:
+while img.any():
+
     cv2.imshow('test image', img)
 
     key = cv2.waitKey(0) & 0xFF
 
-    if key == ord('s'):  # wait for 's' key to save and exit
+    if key == ord('p'):  # wait for 'p' key to process
         edged = get_outlined_image(img)
         mask = crop_outlined_image(edged)
         cv2.imwrite(R'.\data\test_edged.png', edged)
         cv2.imwrite(R'.\data\test_masked.png', mask)
-
-        ang = find_x_extremes(edged)
+        print("a")
+        (x, y, w, h) = get_contour_lims(edged)
+        ang = calc_contact_angle(w, h)
+        print("b")
         # annotated = add_image_text(mask, f"C. angle = {ang:.1f}")
         # cv2.imwrite(R'.\data\test_annotated.png', annotated)
-        pil_im = PIL.Image.fromarray(edged)
-        pil_im.save(R'.\data\test_annotated.bmp')
+        pil_im_grey = Image.fromarray(edged)
+        pil_im_color = pil_im_grey.convert('RGB')  # needed to draw color text onto
+        text_color: colorType = (255, 255, 0)
+        text_position = (10, 10)
+        text_size = 10
+        texty = f"C. angle = {ang:.1f}"
+        try:
+            font = ImageFont.truetype(R'/Library/Fonts/Arial.ttf', text_size)
+        except IOError:
+            font = ImageFont.load_default()
+        draw = ImageDraw.Draw(pil_im_color)
+        draw.text(text_position, texty, font=font, fill=text_color)
+        pil_im_color.save(R'.\data\test_annotated.bmp')
+        print("image processing done")
 
     elif key == 27 or key == ord("q"):         # wait for ESC key or Q to exit
         break
