@@ -37,6 +37,7 @@ django = "*"
 bottle = "*"
 mutagen = "*"
 jinja2 = "*"
+faster-than-requests = "*"
 
 [requires]
 python_version = "3.7"
