@@ -48,6 +48,7 @@ def get_contour_lims(frame: imageType) -> Tuple[int, int, int, int]:
         # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
         # c = max(cnt_areas)
         largest_contour = max(contours, key=cv2.contourArea)
+
         (x, y, w, h) = cv2.boundingRect(largest_contour)
     else:
         raise ValueError("No contours identified in image")
@@ -55,12 +56,12 @@ def get_contour_lims(frame: imageType) -> Tuple[int, int, int, int]:
 
 
 def calc_contact_angle(w: int, h: int) -> float:
-    drop_h = h / 2
-    radius = (drop_h / 2) + ((w * w) / (8 * drop_h))
+    drop_h: float = h / 2
+    radius: float = (drop_h / 2) + ((w * w) / (8 * drop_h))
     opp = radius - drop_h
     hyp = radius
     sin_ca = opp / hyp
-    ca = 90 - math.degrees(math.asin(sin_ca))
+    ca: float = 90 - math.degrees(math.asin(sin_ca))
     # print(f"drop_h={drop_h}, drop_w={w}, model_rad={radius}, angle={ca}")
     return ca
 
@@ -87,14 +88,31 @@ def crop_outlined_image(frame: imageType) -> imageType:
         # c = max(cnt_areas)
         largest_contour = max(contours, key=cv2.contourArea)
         mask = np.zeros(frame.shape, dtype=np.uint8)
-        cv2.drawContours(mask, [largest_contour], -1, 255, -1)  # mask, ?, opacity?, -1 = filled in
+        cv2.drawContours(mask, [largest_contour], -1, color=255, thickness=-1)  # color = opacity?
 
+        pxs_coords: List = [point[0] for point in largest_contour]
+        x_coords = [point[0][0] for point in largest_contour]
+        y_coords = [point[0][1] for point in largest_contour]
+        x_min = min(x_coords)
+        x_max = max(x_coords)
+        # get point with x_min
+        x_min_point = [tuple(point) for point in pxs_coords if point[0] == x_min]
+        x_max_points = [tuple(point) for point in pxs_coords if point[0] == x_max]
+        y_of_max = sum([point[1] for point in x_max_points]) / len(x_max_points)
+        # x_max_pointy = [x_max, sum([point[1] for point in x_max_point]) / len(x_max_point)]
+        x_max_point = (x_max, y_of_max)
+        print(x_min_point, x_max_points)
+
+        x_diff = x_max - x_min
+        y_diff = x_max_point[1] - x_min_point[0][1]
+        skew = math.atan(y_diff / x_diff)
+        print(skew)
         # compute its bounding box of pill, then extract the ROI,
         # and apply the mask
         (x, y, w, h) = cv2.boundingRect(largest_contour)
         imageROI: imageType = frame[y:y + h, x:x + w]
         maskROI = mask[y:y + h, x:x + w]
-        imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
+        imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI) 
         return imageROI
     else:
         raise ValueError("No contours identified in image")
