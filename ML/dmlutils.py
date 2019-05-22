@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 import cv2
 import math
-# import imutils
+import imutils
 import pathlib
 
 from typing import Tuple, Union, List  # , Any, NewType, TypeVar
@@ -74,7 +74,7 @@ def drop_params(w: int, h: int) -> float:
     return angle
 
 
-def crop_outlined_image(frame: imageType) -> imageType:
+def get_image_skew(frame: imageType) -> float:
     """find contours in an edged image, create a mask sized to largest contour and apply to image"""
     # contours = imutils.grab_contours(resul
     result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
@@ -107,12 +107,37 @@ def crop_outlined_image(frame: imageType) -> imageType:
         y_diff = x_max_point[1] - x_min_point[0][1]
         skew = math.atan(y_diff / x_diff)
         print(skew)
+        # if y_of _max > y_of_min: 
+        #else: return -skew
+        return skew
+
+
+
+def crop_outlined_image(frame: imageType) -> imageType:
+    """find contours in an edged image, create a mask sized to largest contour and apply to image"""
+    # contours = imutils.grab_contours(resul
+    result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
+    result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = result[0]
+
+    # ensure at least one contour was found
+    if len(contours) > 0:
+        # grab the largest contour, then draw a mask for the pill
+        # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
+        # c = max(cnt_areas)
+        largest_contour = max(contours, key=cv2.contourArea)
+        mask = np.zeros(frame.shape, dtype=np.uint8)
+        cv2.drawContours(mask, [largest_contour], -1, color=255, thickness=-1)  # color = opacity?
+
+        skew = 0 - get_image_skew(frame)
+
         # compute its bounding box of pill, then extract the ROI,
         # and apply the mask
         (x, y, w, h) = cv2.boundingRect(largest_contour)
         imageROI: imageType = frame[y:y + h, x:x + w]
         maskROI = mask[y:y + h, x:x + w]
         imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI) 
+        imageROI = imutils.rotate_bound(imageROI, -10)
         return imageROI
     else:
         raise ValueError("No contours identified in image")
