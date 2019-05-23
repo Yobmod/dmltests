@@ -1,8 +1,11 @@
 tokens.env
 
 *.coverage
-*/htmlcov
+/htmlcov
 */.cache
+/.mypy_cache
+/.pytest_cache
+/.cache
 */.mypy_cache
 */.pytest_cache
 *.idea
