@@ -17,6 +17,7 @@ nimcache/
 *.pyc
 *.h5
 __pycache__
+nimcache/
 myvenv
 local_settings.py
 db.sqlite3
