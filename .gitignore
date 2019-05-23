@@ -1,13 +1,21 @@
 tokens.env
 
+.mypy_cache/
+jinja/
 *.coverage
 /htmlcov
 */.cache
+mypy_cache
+.mypy_cache
 /.mypy_cache
-/.pytest_cache
-/.cache
+\.mypy_cache
+*/mypy_cache/
 */.mypy_cache
-*/.pytest_cache
+**/*/.mypy_cache
+.pytest_cache
+.cache
+*/.mypy_cache
+*.pytest_cache
 *.idea
 */build
 */dist
