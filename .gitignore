@@ -1,17 +1,20 @@
 tokens.env
 
 *.coverage
-/htmlcov
-/.cache
-/.mypy_cache
+*/htmlcov
+*/.cache
+*/.mypy_cache
+*/.pytest_cache
 *.idea
 */build
 */dist
 /build
 /dist
 */data
+*/htmlcov
 
 *.pyc
+*.h5
 __pycache__
 myvenv
 local_settings.py

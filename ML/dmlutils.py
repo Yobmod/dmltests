@@ -6,9 +6,11 @@ import cv2
 import math
 import imutils
 import pathlib
+from functools import lru_cache
 
-from typing import Tuple, Union, List  # , Any, NewType, TypeVar
-from mytypes import imageType
+from typing import Tuple, Union, List, Iterable, cast  # , Any, NewType, TypeVar
+from mytypes import imageType, contourType, pointType
+
 
 
 def set_res(cap: cv2.VideoCapture, resolution: Union[int, str]) -> str:
@@ -27,6 +29,8 @@ def set_res(cap: cv2.VideoCapture, resolution: Union[int, str]) -> str:
         set_res(cap, resolution)
     return str(resolution)
 
+# @lru_cache(maxsize = 128, typed=True)
+
 
 def get_outlined_image(frame: imageType) -> imageType:
     grayed: imageType = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -38,20 +42,26 @@ def get_outlined_image(frame: imageType) -> imageType:
     return edged
 
 
-def get_contour_lims(frame: imageType) -> Tuple[int, int, int, int]:
-    "get left and right most pixels in edged image"
-    result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
+# @lru_cache(maxsize=128, typed=True)
+def get_largest_contour(frame: imageType) -> contourType:
+    result: Tuple[List[contourType], List[List[np.ndarray[int]]]]
     result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = result[0]
     if len(contours) > 0:
-        # grab the largest contour, then draw a mask for the pill
+        # grab the largest contour, then draw a mask for the pill l
         # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
         # c = max(cnt_areas)
-        largest_contour = max(contours, key=cv2.contourArea)
-
-        (x, y, w, h) = cv2.boundingRect(largest_contour)
+        largest_contour: contourType = max(contours, key=cv2.contourArea)
     else:
         raise ValueError("No contours identified in image")
+    return largest_contour
+
+
+# @lru_cache(maxsize=128, typed=True)
+def get_contour_lims(frame: imageType) -> Tuple[int, int, int, int]:
+    "get left and right most pixels in edged image"
+    largest_contour = get_largest_contour(frame)
+    (x, y, w, h) = cv2.boundingRect(largest_contour)
     return (x, y, w, h)
 
 
@@ -74,73 +84,55 @@ def drop_params(w: int, h: int) -> float:
     return angle
 
 
+# @lru_cache(maxsize=128, typed=True)
 def get_image_skew(frame: imageType) -> float:
     """find contours in an edged image, create a mask sized to largest contour and apply to image"""
-    # contours = imutils.grab_contours(resul
-    result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
-    result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contours = result[0]
+    largest_contour = get_largest_contour(frame)
+    point: pointType
+    # array of array of arrays of int, int -> list of tuple of int,int
+    pxs_coords: List[pointType] = [cast(pointType, tuple(point_array[0])) for point_array in largest_contour]
+    x_coords: List[int] = [point[0] for point in pxs_coords]
+    y_coords: List[int] = [point[1] for point in pxs_coords]
+    x_min: int = min(x_coords)
+    x_max: int = max(x_coords)
 
-    # ensure at least one contour was found
-    if len(contours) > 0:
-        # grab the largest contour, then draw a mask for the pill
-        # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
-        # c = max(cnt_areas)
-        largest_contour = max(contours, key=cv2.contourArea)
-        mask = np.zeros(frame.shape, dtype=np.uint8)
-        cv2.drawContours(mask, [largest_contour], -1, color=255, thickness=-1)  # color = opacity?
+    # get point with x_min
+    x_min_points: List[Tuple[int, int]] = [point for point in pxs_coords if point[0] == x_min]
+    x_max_points: List[Tuple[int, int]] = [point for point in pxs_coords if point[0] == x_max]
+    y_of_max: float = sum([point[1] for point in x_max_points]) / len(x_max_points)
+    y_of_min: float = sum([point[1] for point in x_min_points]) / len(x_min_points)
 
-        pxs_coords: List = [point[0] for point in largest_contour]
-        x_coords = [point[0][0] for point in largest_contour]
-        y_coords = [point[0][1] for point in largest_contour]
-        x_min = min(x_coords)
-        x_max = max(x_coords)
-        # get point with x_min
-        x_min_point = [tuple(point) for point in pxs_coords if point[0] == x_min]
-        x_max_points = [tuple(point) for point in pxs_coords if point[0] == x_max]
-        y_of_max = sum([point[1] for point in x_max_points]) / len(x_max_points)
-        # x_max_pointy = [x_max, sum([point[1] for point in x_max_point]) / len(x_max_point)]
-        x_max_point = (x_max, y_of_max)
-        print(x_min_point, x_max_points)
+    # x_max_point = (x_max, y_of_max)
+    print(x_min_points, x_max_points)
 
-        x_diff = x_max - x_min
-        y_diff = x_max_point[1] - x_min_point[0][1]
-        skew = math.atan(y_diff / x_diff)
-        print(skew)
-        # if y_of _max > y_of_min: 
-        #else: return -skew
-        return skew
+    x_diff = x_max - x_min
+    y_diff = y_of_max - y_of_min
+    # skew is positive -> is clockwise
+    skew = math.degrees(math.atan(y_diff / x_diff))
+    print(skew)
+    # if y_of _max > y_of_min:
+    # else: return -skew
+    return skew
 
 
-
+# @lru_cache(maxsize=128, typed=True)
 def crop_outlined_image(frame: imageType) -> imageType:
     """find contours in an edged image, create a mask sized to largest contour and apply to image"""
-    # contours = imutils.grab_contours(resul
-    result: Tuple[List[np.ndarray[float]], List[List[np.ndarray[int]]]]
-    result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contours = result[0]
+    largest_contour = get_largest_contour(frame)
+    mask = np.zeros(frame.shape, dtype=np.uint8)
+    cv2.drawContours(mask, [largest_contour], -1, color=255, thickness=-1)  # color = opacity?
 
-    # ensure at least one contour was found
-    if len(contours) > 0:
-        # grab the largest contour, then draw a mask for the pill
-        # cnt_areas = [cv2.contourArea(cntr) for cntr in contours]
-        # c = max(cnt_areas)
-        largest_contour = max(contours, key=cv2.contourArea)
-        mask = np.zeros(frame.shape, dtype=np.uint8)
-        cv2.drawContours(mask, [largest_contour], -1, color=255, thickness=-1)  # color = opacity?
+    skew = get_image_skew(frame)
 
-        skew = 0 - get_image_skew(frame)
-
-        # compute its bounding box of pill, then extract the ROI,
-        # and apply the mask
-        (x, y, w, h) = cv2.boundingRect(largest_contour)
-        imageROI: imageType = frame[y:y + h, x:x + w]
-        maskROI = mask[y:y + h, x:x + w]
-        imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI) 
-        imageROI = imutils.rotate_bound(imageROI, -10)
-        return imageROI
-    else:
-        raise ValueError("No contours identified in image")
+    # compute its bounding box of pill, then extract the ROI,
+    # and apply the mask
+    (x, y, w, h) = cv2.boundingRect(largest_contour)
+    imageROI: imageType = frame[y:y + h, x:x + w]
+    maskROI = mask[y:y + h, x:x + w]
+    imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
+    # if skew> 0, need to rotateanticlockwise
+    imageROI = imutils.rotate_bound(imageROI, -skew) 
+    return imageROI
 
 
 def save_image_groups(frames_list: List[imageType], save_folder: str = "data", raw: bool = True, edged: bool = False, masked: bool = False) -> None:

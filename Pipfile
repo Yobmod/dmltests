@@ -17,6 +17,7 @@ mccabe = "*"
 autopep8 = "*"
 flake8 = "*"
 pdbpp = "*"
+pytype = "*"
 
 [packages]
 flask = "*"
@@ -37,7 +38,11 @@ django = "*"
 bottle = "*"
 mutagen = "*"
 jinja2 = "*"
-faster-than-requests = "*"
+boltons = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-login = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.7"

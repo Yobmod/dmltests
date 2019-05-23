@@ -6,17 +6,16 @@ from PIL import Image, ImageFont, ImageDraw
 from dmlutils import get_outlined_image, crop_outlined_image, get_contour_lims, calc_contact_angle  # set_res
 
 from typing import Type, NewType
-from mytypes import imageType, colorType
+from mytypes import imageType, colorType, PILImage
 
 
-class PILImage(Image.Image): ...
 # raw_frames: t.List[imageType] = []
 
-img: imageType = cv2.imread(R'.\data\ceria.png', cv2.IMREAD_COLOR)  # cv2.IMREAD_GRAYSCALE  /  cv2.IMREAD_UNCHANGED
+img: imageType = cv2.imread(R'.\data\test.png', cv2.IMREAD_COLOR)  # cv2.IMREAD_GRAYSCALE  /  cv2.IMREAD_UNCHANGED
 
 while img is not None:  # and img.any():
 
-    cv2.imshow('test image', img)
+    cv2.imshow('test image', img) 
 
     key: int = cv2.waitKey(0) & 0xFF
 
@@ -48,6 +47,8 @@ while img is not None:  # and img.any():
 
     elif key == 27 or key == ord("q"):         # wait for ESC key or Q to exit
         break
+else:
+    print("Image not loaded...")
 
 cv2.destroyAllWindows()
 

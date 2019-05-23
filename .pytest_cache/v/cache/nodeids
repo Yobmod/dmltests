@@ -1,4 +1,8 @@
 [
+  "ML/tests.py::test1",
+  "ML/tests.py::test2",
+  "ML/tests.py::test3",
+  "ML/tests.py::test_image_list",
   "pygame/gamer/test_memorygame.py::TestCaseGame::test_1",
   "pyside/mplayer/tests.py::TestMplayer::test1",
   "pyside/mplayer/tests.py::TestMplayer::test_init_values",
