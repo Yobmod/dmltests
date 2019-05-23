@@ -132,7 +132,7 @@ def crop_outlined_image(frame: imageType) -> imageType:
     imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
     # if skew> 0, need to rotateanticlockwise
     imageROI = imutils.rotate_bound(imageROI, -skew) 
-    return imageROI
+    return imageROI 
 
 
 def save_image_groups(frames_list: List[imageType], save_folder: str = "data", raw: bool = True, edged: bool = False, masked: bool = False) -> None:
