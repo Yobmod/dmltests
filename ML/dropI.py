@@ -5,13 +5,13 @@ from PIL import Image, ImageFont, ImageDraw
 
 from dmlutils import get_outlined_image, crop_outlined_image, get_contour_lims, calc_contact_angle  # set_res
 
-from typing import Type, NewType
+from typing import Type, NewType 
 from mytypes import imageType, colorType, PILImage
 
 
 # raw_frames: t.List[imageType] = []
 
-img: imageType = cv2.imread(R'.\data\test.png', cv2.IMREAD_COLOR)  # cv2.IMREAD_GRAYSCALE  /  cv2.IMREAD_UNCHANGED
+img: imageType = cv2.imread(R'.\data\ceria.png', cv2.IMREAD_COLOR)  # cv2.IMREAD_GRAYSCALE  /  cv2.IMREAD_UNCHANGED
 
 while img is not None:  # and img.any():
 
@@ -21,8 +21,8 @@ while img is not None:  # and img.any():
 
     if key == ord('p'):  # wait for 'p' key to process
 
-        edged: imageType = get_outlined_image(img)
-        mask: imageType = crop_outlined_image(edged)
+        edged = get_outlined_image(img)
+        mask = crop_outlined_image(edged)
         cv2.imwrite(R'.\data\ceria_edged.png', edged)
         cv2.imwrite(R'.\data\ceria_masked.png', mask)
         (x, y, w, h) = get_contour_lims(edged)
@@ -35,6 +35,7 @@ while img is not None:  # and img.any():
         text_position = (10, 10)
         text_size = 10
         texty = f"C. angle = {ang:.1f}"
+        reveal_locals()
 
         try:
             font: ImageFont.FreeTypeFont = ImageFont.truetype(R'/Library/Fonts/Arial.ttf', text_size)
@@ -48,9 +49,9 @@ while img is not None:  # and img.any():
     elif key == 27 or key == ord("q"):         # wait for ESC key or Q to exit
         break
 else:
-    print("Image not loaded...")
+    print("Image not loaded...") 
 
-cv2.destroyAllWindows()
+cv2.destroyAllWindows() 
 
 # gray: np.ndarray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 # 0=vert, 1=horiz, -1=both       # Display the resulting frame

@@ -9,8 +9,7 @@ import pathlib
 from functools import lru_cache
 
 from typing import Tuple, Union, List, Iterable, cast  # , Any, NewType, TypeVar
-from mytypes import imageType, contourType, pointType
-
+from mytypes import imageType, contourType, pointType, intArray
 
 
 def set_res(cap: cv2.VideoCapture, resolution: Union[int, str]) -> str:
@@ -29,22 +28,26 @@ def set_res(cap: cv2.VideoCapture, resolution: Union[int, str]) -> str:
         set_res(cap, resolution)
     return str(resolution)
 
-# @lru_cache(maxsize = 128, typed=True)
+# @lru_cache(maxsize = 128, typed=True) 
 
 
 def get_outlined_image(frame: imageType) -> imageType:
     grayed: imageType = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     blurred: imageType = cv2.GaussianBlur(grayed, (9, 9), 0)
+    #cv2.imwrite(R'.\data\ceria_grey.png', grayed)
+    #cv2.imwrite(R'.\data\ceria_blurred.png', blurred)
     # perform edge detection, then perform a dilation + erosion to close gaps
     edged: imageType = cv2.Canny(blurred, 20, 100)
+    # cv2.imwrite(R'.\data\ceria_initedge.png', edged)
     edged = cv2.dilate(edged, None, iterations=1)
     edged = cv2.erode(edged, None, iterations=1)
+    # cv2.imwrite(R'.\data\ceria_grey.png', grayed)
     return edged
 
 
 # @lru_cache(maxsize=128, typed=True)
 def get_largest_contour(frame: imageType) -> contourType:
-    result: Tuple[List[contourType], List[List[np.ndarray[int]]]]
+    result: Tuple[List[contourType], List[List[intArray]]]
     result = cv2.findContours(frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = result[0]
     if len(contours) > 0:
@@ -53,7 +56,7 @@ def get_largest_contour(frame: imageType) -> contourType:
         # c = max(cnt_areas)
         largest_contour: contourType = max(contours, key=cv2.contourArea)
     else:
-        raise ValueError("No contours identified in image")
+        raise ValueError("No contours identified in image") 
     return largest_contour
 
 
@@ -92,7 +95,7 @@ def get_image_skew(frame: imageType) -> float:
     # array of array of arrays of int, int -> list of tuple of int,int
     pxs_coords: List[pointType] = [cast(pointType, tuple(point_array[0])) for point_array in largest_contour]
     x_coords: List[int] = [point[0] for point in pxs_coords]
-    y_coords: List[int] = [point[1] for point in pxs_coords]
+    # y_coords: List[int] = [point[1] for point in pxs_coords]
     x_min: int = min(x_coords)
     x_max: int = max(x_coords)
 
@@ -126,13 +129,17 @@ def crop_outlined_image(frame: imageType) -> imageType:
 
     # compute its bounding box of pill, then extract the ROI,
     # and apply the mask
+    h: int
+    w: int
+    x: int
+    y: int
     (x, y, w, h) = cv2.boundingRect(largest_contour)
-    imageROI: imageType = frame[y:y + h, x:x + w]
+    imageROI = cast(imageType, frame[y:y + h, x:x + w])
     maskROI = mask[y:y + h, x:x + w]
     imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
     # if skew> 0, need to rotateanticlockwise
-    imageROI = imutils.rotate_bound(imageROI, -skew) 
-    return imageROI 
+    imageROI = imutils.rotate_bound(imageROI, -skew)
+    return imageROI
 
 
 def save_image_groups(frames_list: List[imageType], save_folder: str = "data", raw: bool = True, edged: bool = False, masked: bool = False) -> None:
