@@ -8,6 +8,8 @@
     "python.linting.pylamaEnabled": true,
     "python.linting.flake8Enabled": true,
 
+    "python.jediEnabled": true,
+    
     "code-runner.executorMap": {
         "javascript": "node",
         "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
