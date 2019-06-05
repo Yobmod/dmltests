@@ -1,11 +1,12 @@
 """scripts to preocess droplet video file, saving video output and csv of relavent data (frame_no, time, angle, height, width)
-Required modules: dmlutils / mytypes 
+Required modules: dmlutils, mytypes 
 Dependencies: CV2, numpy, Pillow"""
 # -*- coding: utf-8 -*-
 import cv2
 # from PIL import Image, ImageFont, ImageDraw
 from pathlib import Path
 import numpy as np
+import sys
 
 from dmlutils import get_outlined_image, crop_outlined_image, get_contour_lims, calc_contact_angle, save_image_groups  # set_res
 
@@ -18,9 +19,10 @@ video_path = Path(video_title).absolute()  # .resolve()  ?
 video_stem = video_path.stem  # .anchor (.drive .root) .parent .name (.stem .suffix)
 
 if video_path.exists():
+    print(video_path)
     vid: videoType = cv2.VideoCapture(video_title)
 else:
-    print("Error: Video file not found...")
+    sys.exit("Error: Video file not found...")
 
 fps: int = vid.get(cv2.CAP_PROP_FPS)      # OpenCV2 version 2 used "CV_CAP_PROP_FPS"
 frameCount = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))

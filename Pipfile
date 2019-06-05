@@ -43,6 +43,7 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-mail = "*"
+homeassistant = "*"
 
 [requires]
 python_version = "3.7"
