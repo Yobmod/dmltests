@@ -35,7 +35,7 @@ while img is not None:  # and img.any():
         text_position = (10, 10)
         text_size = 10
         texty = f"C. angle = {ang:.1f}"
-        reveal_locals()
+        # reveal_locals()
 
         try:
             font: ImageFont.FreeTypeFont = ImageFont.truetype(R'/Library/Fonts/Arial.ttf', text_size)
