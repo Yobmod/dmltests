@@ -123,7 +123,7 @@ for x in CA_list:
 """
 
 
-CA_array = np.array((vid_times, CA_list, widths, heights), dtype=float).T
+CA_array = np.array((vid_times, CA_list, widths, heights), dtype=float).transpose()
 # CA_array.T
 # print(CA_array)
 
@@ -143,8 +143,7 @@ print(f"Results file saved to {out_file}")
 
 plt.plot(vid_times, CA_list)
 plt.ylim(0, 90)
-plt. set_title('Contact angle vs Time')
-# plt.suptitle('Contact angle vs Time')
+plt.suptitle('Contact angle vs Time')
 plt.xlabel('Time (s)')
 plt.ylabel('Contact angle (\u00B0)')
 plt.savefig(graph_file, format="png", bbox_inches="tight", tranparent=True)
