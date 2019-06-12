@@ -43,9 +43,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-mail = "*"
-homeassistant = "*"
-pyyaml = "*"
 pysimplegui = "*"
+pyyaml = ">=4.2"
 
 [requires]
 python_version = "3.7"
