@@ -16,6 +16,7 @@ from typing import List, Tuple
 from mytypes import videoType, imageType, floatArray  # , colorType, PILImage
 
 
+
 video_title = R'.\tests\test.mp4'
 video_path = Path(video_title).resolve()
 video_folder = video_path.parent  # .resolve()  # .resolve()  ?
@@ -128,7 +129,7 @@ CA_array = np.array((vid_times, CA_list, widths, heights), dtype=float).transpos
 # print(CA_array)
 
 
-# TODO: Save maked_frames, maked masked video? 
+# TODO: Save maked_frames, maked masked video?
 # save raw, edged, masked
 # save_image_groups(raw_frames)
 
