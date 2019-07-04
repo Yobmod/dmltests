@@ -3,9 +3,9 @@ def fib(n: int) -> tuple:
     a: int
     b: int
     i: int
-    a, b  = 1, 1
+    a, b = 1, 1
     for i in range(n):
-       a, b = a+b, a
+        a, b = a + b, a
     return a, b
 
 

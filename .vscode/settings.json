@@ -1,8 +1,8 @@
 {
-    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\Users\\Yobmod\\.virtualenvs\\dmltests-0Rg3EQuB\\Scripts\\python.exe",
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    "python.testing.pyTestEnabled": false,
+    "python.testing.pytestEnabled": false,
     "python.linting.enabled": true,
     "python.linting.mypyEnabled": true,
     "python.linting.pylamaEnabled": true,

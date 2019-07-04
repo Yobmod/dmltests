@@ -129,7 +129,7 @@ CA_array = np.array((vid_times, CA_list, widths, heights), dtype=float).transpos
 # print(CA_array)
 
 
-# TODO: Save maked_frames, maked masked video?
+# TODO : Save maked_frames, maked masked video?
 # save raw, edged, masked
 # save_image_groups(raw_frames)
 

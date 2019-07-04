@@ -1,8 +1,9 @@
-import sys; sys.path.append("/dml/")
-from dml import fib_py, fib_my, fib_cy
 import cProfile
+from dml import fib_py, fib_my, fib_cy
+import sys
+sys.path.append("/dml/")
 
-pr = cProfile.Profile(time_unit=1000) 
+pr = cProfile.Profile(timeunit=1000)
 pr.enable()
 
 x = 50
@@ -16,7 +17,7 @@ print(py_result)
 print(cy_result)
 print(my_result)
 
-print(py_result==cy_result)
+print(py_result == my_result)
 
 pr.disable()
 pr.print_stats(sort='cumtime')

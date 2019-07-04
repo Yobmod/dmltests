@@ -17,17 +17,20 @@ extensions = [Extension("*", ["*.pyx"])]
 
 
 setup(
-    name= 'Generic model class',
+    name='Generic model class',
     # cmdclass = {'build_ext': build_ext},
     # include_dirs = [np.get_include()], # only if it requires numpy
-    ext_modules = cythonize(extensions,
-                            build_dir="build",  # puts .c and .html here
-                            annotate=True,  # generate .html
-                            compiler_directives={'embedsignature': True,
-                                                 'warn.undeclared': True,
-                                                 'warn.unused_arg': True,
-                                                 'warn.unused': True,
-                                                 'warn.unused_result': True,
-                                                }
-                            )
+    ext_modules=cythonize(extensions,
+                          build_dir="build",  # puts .c and .html here
+                          annotate=True,  # generate .html
+                          language_level='3',  # python version
+                          # language='c',  # 'c' or 'c++'
+                          compiler_directives={'embedsignature': True,
+                                               'warn.undeclared': True,
+                                               'warn.unused_arg': True,
+                                               'warn.unused': True,
+                                               'warn.unused_result': True,
+
+                                               }
+                          )
 )
