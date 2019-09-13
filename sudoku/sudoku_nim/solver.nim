@@ -166,7 +166,7 @@ else:
 #var attempt_empty = solve_sudoku(empty_matrix)  # should work, but report error
 #var attempt_fake = solve_sudoku(fake_matrix)  # should work, but report error
 
-let start_time = cpuTime()
+var start_time = cpuTime()
 var solve_time: float
 
 if solve_sudoku(matrix):
@@ -177,25 +177,38 @@ if solve_sudoku(matrix):
 else:
   echo "Failed test test"
 
+
+
+start_time = cpuTime()
+if solve_sudoku(hardest_matrix):
+  solve_time = cpuTime() - start_time
+  echo fmt"test pass: difficult version 2 matrix in {solve_time} seconds"
+  print_sudoku(hardest_matrix)
+else:
+  echo "Failed test hardest"
+
+start_time = cpuTime()
 if solve_sudoku(hard_matrix):
-  solve_time = cpuTime() - start_time - solve_time
+  solve_time = cpuTime() - start_time
   echo fmt"test pass: difficult matrix in {solve_time} seconds"
   print_sudoku(hard_matrix)
 else:
   echo "Failed test hard"
 
-if solve_sudoku(hard_matrix):
-  solve_time = cpuTime() - start_time - solve_time
-  echo fmt"test pass: difficult matrix in {solve_time} seconds"
-  print_sudoku(hard_matrix)
-else:
-  echo "Failed test hardest"
-#[
-if attempt_empty == true:
+
+if solve_sudoku(empty_matrix):
   echo "test pass: empty matrix solved (needs checks for multiple solutions)"
+  print_sudoku(empty_matrix)
 else:
   echo "test FAIL: why doesnt empty matrix work?"
 
-if attempt_fake == false:
-  echo "test pass: fake matrix should fail (needs checks of intial matrix)"
+
+#[  # takes ages! Only run to get upper time limit
+start_time = cpuTime()
+if solve_sudoku(fake_matrix):
+  solve_time = cpuTime() - start_time
+  echo "test FAIL: fake matrix should fail (needs checks of intial matrix)"
+else:
+  solve_time = cpuTime() - start_time
+  echo fmt"test PASS: fake matrix should fail (needs checks of intial matrix). Took {solve_time} seconds to check"
 ]#
