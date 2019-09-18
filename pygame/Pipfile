@@ -8,7 +8,6 @@ Pygame = "*"
 python-dotenv = "*"
 # toolz = "*"
 
-
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
@@ -23,6 +22,10 @@ autopep8 = "*"
 pyinstaller = "*"
 pipenv = "*"
 mccabe = "*"
+pyannotate = "*"
+monkeytype = "*"
+nuitka = "*"
+"pywin32" = "*"
 
 [requires]
 python_version = "3.7"

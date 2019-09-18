@@ -1,0 +1,2 @@
+#include "winuser.h"
+3 RCDATA "hello.build/__constants.bin"

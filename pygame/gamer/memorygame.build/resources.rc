@@ -1,0 +1,2 @@
+#include "winuser.h"
+3 RCDATA "memorygame.build/__constants.bin"

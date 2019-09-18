@@ -1,0 +1,2 @@
+#include "winuser.h"
+3 RCDATA "terisgame.build/__constants.bin"

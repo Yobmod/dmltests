@@ -45,6 +45,12 @@ flask-login = "*"
 flask-mail = "*"
 pysimplegui = "*"
 pyyaml = ">=4.2"
+termcolor = "*"
+rapidtables = "*"
+colorama = "*"
+ordered-set = "*"
+func-timeout = "*"
+toolz = "*"
 
 [requires]
 python_version = "3.7"
