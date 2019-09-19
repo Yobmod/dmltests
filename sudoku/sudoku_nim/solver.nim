@@ -127,14 +127,9 @@ proc is_safe(input: array[9, array[9, int]], n: int, r: int, c: int): bool =
 proc solve_sudoku(input: var array[9, array[9, int]]): bool = 
     # if all cells are assigned then the sudoku is already solved
     
-  var unsolved = number_unassigned(input)
-
-  if unsolved[2] == false:
+  let (row, col, unsolved) = number_unassigned(input)
+  if unsolved == false:
     return true
-
-  let 
-    row: int = unsolved[0]
-    col: int = unsolved[1]
 
   for num in 1 .. SIZE:
     # if we can assign i to the cell or not the cell is matrix[row][col]
@@ -203,7 +198,8 @@ else:
   echo "test FAIL: why doesnt empty matrix work?"
 
 
-#[  # takes ages! Only run to get upper time limit
+#[
+# takes ages! Only run to get upper time limit
 start_time = cpuTime()
 if solve_sudoku(fake_matrix):
   solve_time = cpuTime() - start_time
@@ -212,3 +208,4 @@ else:
   solve_time = cpuTime() - start_time
   echo fmt"test PASS: fake matrix should fail (needs checks of intial matrix). Took {solve_time} seconds to check"
 ]#
+

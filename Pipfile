@@ -21,7 +21,7 @@ pytype = "*"
 
 [packages]
 flask = "*"
-numpy = "*"
+numpy = ">=1.17.2"
 pygame = "*"
 pyside2 = "*"
 cython = "*"
@@ -45,12 +45,15 @@ flask-login = "*"
 flask-mail = "*"
 pysimplegui = "*"
 pyyaml = ">=4.2"
+sqlalchemy-stubs = "*"
 termcolor = "*"
 rapidtables = "*"
 colorama = "*"
 ordered-set = "*"
+ordered-set-stubs = "*"
 func-timeout = "*"
 toolz = "*"
 
+
 [requires]
-python_version = "3.7"
+python_version = "3.7.3"
