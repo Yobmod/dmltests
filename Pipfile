@@ -53,7 +53,7 @@ ordered-set = "*"
 ordered-set-stubs = "*"
 func-timeout = "*"
 toolz = "*"
-
+cytoolz = "*"
 
 [requires]
 python_version = "3.7.3"

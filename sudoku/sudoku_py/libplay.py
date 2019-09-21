@@ -19,11 +19,50 @@ from collections import Counter, namedtuple, deque
 from array import array
 from func_timeout import func_set_timeout, func_timeout
 from mypy_extensions import TypedDict
-from typing import List, Optional, NamedTuple
+from typing import List, Optional, NamedTuple, Callable
+import cytoolz as toolz
+from cytoolz import curry
 
 # ----------------------------------------------------------------------
 
 
+def compose_two(func1: Callable, func2: Callable) -> Callable:
+    def curried(*args: Any, **kwargs: Any) -> Any:
+        return func2(func1(*args, **kwargs))
+    return curried
+
+
+def calc_BMI(weight: float, height: float) -> float:
+    return weight / height**2
+
+
+def evaluate_BMI(bmi: float) -> str:
+    if bmi < 18.5:
+        text = colored("Underweight", 'red')
+    elif bmi < 25:
+        text = "Normal (healthy weight)"
+    elif bmi < 30:
+        text = colored("Overweight", 'red')
+    else:
+        text = colored("Obese", 'red', attrs=['underline'])
+    return f"BMI = {bmi:.1f}, {text}"
+
+
+BMI_judge = compose_two(calc_BMI, evaluate_BMI)
+
+weight = 1.0  # sentinal
+while weight > 0:
+    weight = float(input("weight (kg) "))
+    height = float(input("height (m) "))
+    print(BMI_judge(weight, height))
+
+
+@curry
+def BMI_judge_toolz(weight: float, height: float) -> str:
+    return "seems pointless"
+
+
+# ---------------------------------------------------------------------
 def receives_OrderedSet_int(ordered_set: OrderedSet[int]) -> None:
     print(ordered_set)
 
@@ -153,7 +192,5 @@ class InventoryItem:
         return self.unit_price * self.quantity_on_hand
 
 
-
 item1 = InventoryItem('Jim', 3.55, 2)
 print(item1.total_cost())
-
