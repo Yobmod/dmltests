@@ -1,4 +1,10 @@
+# moshmosh?
+# +pipeline
+# +quick-lamnda
+# +pattern-matching
+
 from __future__ import annotations
+import moshmosh
 from mypy.erasetype import erase_type
 from mypy.erasetype import TypeVarEraser
 from typing import TypeVar
@@ -22,6 +28,7 @@ from mypy_extensions import TypedDict
 from typing import List, Optional, NamedTuple, Callable
 import cytoolz as toolz
 from cytoolz import curry
+
 
 # ----------------------------------------------------------------------
 
@@ -194,3 +201,13 @@ class InventoryItem:
 
 item1 = InventoryItem('Jim', 3.55, 2)
 print(item1.total_cost())
+
+
+# ---------------------------
+datamy = 123
+
+with match(datamy):
+    if 111:
+        res = 111
+    if 123:
+        res = 123
