@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (QWidget, QApplication, QLineEdit, QMenuBar, QStat
                                # QDialog, QListWidgetItem,
                                )
 from PySide2 import QtGui, QtCore
-from pygame import mixer
+from pygame.mixer import mixer
 from mutagen.mp3 import MP3  # ASF, FLAC, MP4, OGG
 import os
 import threading
@@ -259,7 +259,7 @@ class Form(QWidget):
             selected_song_from_box = self.playlistbox.currentItem()  # get current item
             if selected_song_from_box:
                 self.selected_song: str = selected_song_from_box.text()  # get items text
-                self.selected_song_num: int = self.playlistbox.currentRow()
+                self.selected_song_num = self.playlistbox.currentRow()
             else:
                 self.statusbar.showMessage("Choose a file from the playlist", timeout=2_000)
         else:
