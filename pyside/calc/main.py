@@ -51,13 +51,10 @@ def main() -> None:
     logger = set_up_logger()
     print(f"Imports done @ {time.perf_counter() - start_time:.2f} s")
 
-    # icon_path = Path(R'.\coffeebean.ico')
+    # icon_path = Path(R'.\coffeebean.ico')  # move to pyclac.py
     try:
         print(f"GUI started @ {time.perf_counter() - start_time:.2f} s")
         main()
-    except (KeyboardInterrupt, SystemExit) as kexc:
-        print('\nApp closed with ctrl-C')
-        logger.info(repr(kexc))
     except Exception as exc:
         logger.exception(repr(exc))
         raise
