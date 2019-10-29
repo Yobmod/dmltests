@@ -12,7 +12,7 @@ data
 .mypy_cache
 .pytest_cache
 *.coverage
-*/htmlcov
+htmlcov
 */**/.cache
 *.idea
 
