@@ -51,19 +51,27 @@ class Window(QMainWindow):
         self._quit_button()
         self._calender()
         self._calculator()
+        self._style_selector()
+        self._progressbar_button()
+        self._resize_checkbox()
 
+    def _resize_checkbox(self) -> None:
         self.checkBox = QCheckBox('Enlarge Window', self)
         self.checkBox.move(300, 25)
         self.checkBox.stateChanged.connect(self.enlarge_window_with_check)
         # self.checkBox.stateChanged.connect(self.enlarge_window_from_state)  ## useable with multple widgets
 
+    def _progressbar_button(self) -> None:
         self.progress = QProgressBar(self)
         self.progress.setGeometry(200, 80, 250, 20)
+        self.generalLayoutMaster.addWidget(self.progress)
 
         self.btn = QPushButton("Download", self)
         self.btn.move(200, 120)
         self.btn.clicked.connect(self.download)
+        self.generalLayoutMaster.addWidget(self.btn)
 
+    def _style_selector(self) -> None:
         # print(self.style().objectName())
         self.styleChoice = QLabel("Windows Vista", self)
         # self.styleChoice.move(50, 150)
