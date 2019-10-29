@@ -2,19 +2,17 @@ tokens.env
 pipfile.lock
 poetry.lock
 
+*/**/dist
+*/**/build
+*/**/data
+
 .mypy_cache/
 .pytest_cache/
 *.coverage
-/htmlcov
-*/.cache
-.cache/
+8/htmlcov
+*/**/.cache
 *.idea
-*/build
-*/dist
-/build
-/dist
-*/data
-*/htmlcov
+
 nimcache/
 *.pyc
 *.h5
