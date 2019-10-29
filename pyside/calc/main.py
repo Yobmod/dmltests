@@ -39,19 +39,15 @@ def main() -> None:
     """."""
     if DEBUG is True:
         prof = start_profiling()
-
+    print("starting...")
+    
     import time
     start_time = time.perf_counter()
-    import multiprocessing
-    multiprocessing.freeze_support()
-    print("starting...")
-
     from pathlib import Path
     from pycalc import main
     logger = set_up_logger()
     print(f"Imports done @ {time.perf_counter() - start_time:.2f} s")
 
-    # icon_path = Path(R'.\coffeebean.ico')  # move to pyclac.py
     try:
         print(f"GUI started @ {time.perf_counter() - start_time:.2f} s")
         main()

@@ -7,7 +7,7 @@ from pathlib import Path
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow
-from PySide2.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QLineEdit, QLabel
+from PySide2.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QLineEdit
 
 from typing import Union, Dict, Tuple, Optional, Callable, cast
 
@@ -28,7 +28,41 @@ class PyCalcFrame(QMainWindow):
 
     def __init__(self,
                  win_title: str = 'PyCalc',
-                 win_size: Tuple[int, int] = (250, 450),
+                 win_size: Tuple[int, int] = (235, 235),
+                 icon_path: Union[Path, str, None] = Path(R'.\coffeebean.ico')
+                 ) -> None:
+        """View initializer."""
+        super().__init__()
+
+        """
+        # Set some main window's properties
+        self.setWindowTitle(win_title)
+        self.setFixedSize(win_size[0], win_size[1])
+        if isinstance(icon_path, Path):
+            icon_path = str(icon_path.resolve())
+        self.setWindowIcon(QIcon(icon_path))
+        """
+
+        # Set the central widget
+        self._centralWidget = PyCalcUi(win_title="")
+        self.setCentralWidget(self._centralWidget)
+        self.generalLayout = QVBoxLayout()
+        self._centralWidget.setLayout(self.generalLayout)
+        self._open_calc()
+
+    def _open_calc(self) -> None:
+        calc_view = PyCalcUi()
+        # calc_view.show()
+        self.calc_widget = PyCalcCtrl(view=calc_view, model=evaluateExpression)
+
+
+
+class PyCalcUi(QMainWindow):
+    """PyCalc's View (GUI)."""
+
+    def __init__(self,
+                 win_title: str = 'PyCalc',
+                 win_size: Tuple[int, int] = (235, 235),
                  icon_path: Union[Path, str, None] = Path(R'.\coffeebean.ico')
                  ) -> None:
         """View initializer."""
@@ -42,37 +76,14 @@ class PyCalcFrame(QMainWindow):
         self.setWindowIcon(QIcon(icon_path))
 
         # Set the central widget
-        self._centralWidget = QWidget()
+        self._centralWidget = QWidget(self)
         self.setCentralWidget(self._centralWidget)
-        self.generalLayoutMaster = QVBoxLayout()
-        self._centralWidget.setLayout(self.generalLayoutMaster)
-
-        calculator = PyCalcUi(self)
-        self.generalLayoutMaster.addWidget(calculator)
-
-        label = QLabel("sdklf", self)
-        self.generalLayoutMaster.addWidget(label)
-
-
-class PyCalcUi(QWidget):
-    """PyCalc's View (GUI)."""
-
-    def __init__(self,
-                 parent: QWidget = None,
-                 ) -> None:
-        """View initializer."""
-        super().__init__()
-
-        self.setFixedSize(235, 235)
-
         self.generalLayout = QVBoxLayout()
-        self.setLayout(self.generalLayout)
+        self._centralWidget.setLayout(self.generalLayout)
+
         # Create the display and the buttons
         self._createDisplay()
         self._createButtons()
-
-        # Connect signals and slots
-        self._connectSignals()
 
     def _createDisplay(self) -> None:
         """Create the display."""
@@ -87,7 +98,6 @@ class PyCalcUi(QWidget):
 
     def _createButtons(self) -> None:
         """Create the buttons."""
-        print("creating button")
         self.buttons: Dict[str, QPushButton] = {}
         buttonsLayout = QGridLayout()
         # Button text | position on the QGridLayout
@@ -125,39 +135,52 @@ class PyCalcUi(QWidget):
         """Clear the display."""
         self.setDisplayText('')
 
+
+class PyCalcCtrl:
+    """PyCalc Controller class."""
+
     ERROR_MSG = 'ERROR'
+
+    def __init__(self, view: PyCalcUi, model: Callable[[str], str]) -> None:
+        """Controller initializer."""
+        self._view = view
+        self._evaluate = model
+
+        # Connect signals and slots
+        self._connectSignals()
 
     def _calculateResult(self) -> None:
         """Evaluate expressions."""
-        result = self._evaluateExpression(self.displayText())
-        self.setDisplayText(result)
+        result = self._evaluate(self._view.displayText())
+        self._view.setDisplayText(result)
 
     def _buildExpression(self, sub_exp: str) -> None:
         """Build expression."""
-        if self.displayText() == self.ERROR_MSG:
-            self.clearDisplay()
+        if self._view.displayText() == self.ERROR_MSG:
+            self._view.clearDisplay()
 
-        expression = self.displayText() + sub_exp
-        self.setDisplayText(expression)
+        expression = self._view.displayText() + sub_exp
+        self._view.setDisplayText(expression)
 
     def _connectSignals(self) -> None:
-        # Connect signals and slots.
-        for btnText, btn in self.buttons.items():
+        """Connect signals and slots."""
+        for btnText, btn in self._view.buttons.items():
             if btnText not in {'=', 'C'}:
                 btn.clicked.connect(partial(self._buildExpression, btnText))
 
-        self.buttons['='].clicked.connect(self._calculateResult)
-        self.display.returnPressed.connect(self._calculateResult)
-        self.buttons['C'].clicked.connect(self.clearDisplay)
+        self._view.buttons['='].clicked.connect(self._calculateResult)
+        self._view.display.returnPressed.connect(self._calculateResult)
+        self._view.buttons['C'].clicked.connect(self._view.clearDisplay)
 
-    def _evaluateExpression(self, expression: str) -> str:
-        """Evaluate an expression."""
-        try:
-            result = str(eval(expression, {}, {}))
-        except Exception:
-            result = PyCalcUi.ERROR_MSG
-        finally:
-            return result
+
+def evaluateExpression(expression: str) -> str:
+    """Evaluate an expression."""
+    try:
+        result = str(eval(expression, {}, {}))
+    except Exception:
+        result = PyCalcCtrl.ERROR_MSG
+    finally:
+        return result
 
 
 def main() -> None:
@@ -165,9 +188,10 @@ def main() -> None:
     # Create an instance of QApplication
     pycalc = QApplication(sys.argv)
     # Show the calculator's GUI
-    #view = PyCalcUi(win_title="MyCalc")
-    #view.show()
+    view = PyCalcUi(win_title="MyCalc")
+    view.show()
     # Create instances of the model and the controller
+    PyCalcCtrl(view=view, model=evaluateExpression)
 
     calc = PyCalcFrame()
     calc.show()
