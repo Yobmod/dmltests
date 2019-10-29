@@ -7,7 +7,9 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QLineEdit
 
-from typing import Dict, Tuple, cast
+from typing import Dict, Tuple, Callable, cast, NewType
+
+expressType = NewType('expressType', str)
 
 
 class PyCalcUi(QMainWindow):
@@ -44,24 +46,16 @@ class PyCalcUi(QMainWindow):
         self.buttons: Dict[str, QPushButton] = {}
         buttonsLayout = QGridLayout()
         # Button text | position on the QGridLayout
-        buttons: Dict[str, Tuple[int, int]] = {'7': (0, 0),
-                                               '8': (0, 1),
-                                               '9': (0, 2),
+        buttons: Dict[str, Tuple[int, int]] = {'7': (0, 0), '8': (0, 1), '9': (0, 2),
                                                '/': (0, 3),
                                                'C': (0, 4),
-                                               '4': (1, 0),
-                                               '5': (1, 1),
-                                               '6': (1, 2),
+                                               '4': (1, 0), '5': (1, 1), '6': (1, 2),
                                                '*': (1, 3),
                                                '(': (1, 4),
-                                               '1': (2, 0),
-                                               '2': (2, 1),
-                                               '3': (2, 2),
+                                               '1': (2, 0), '2': (2, 1), '3': (2, 2),
                                                '-': (2, 3),
                                                ')': (2, 4),
-                                               '0': (3, 0),
-                                               '00': (3, 1),
-                                               '.': (3, 2),
+                                               '0': (3, 0), '00': (3, 1), '.': (3, 2),
                                                '+': (3, 3),
                                                '=': (3, 4),
                                                }
@@ -90,14 +84,26 @@ class PyCalcUi(QMainWindow):
 class PyCalcCtrl:
     """PyCalc Controller class."""
 
-    def __init__(self, view: PyCalcUi) -> None:
+    ERROR_MSG = 'ERROR'
+
+    def __init__(self, view: PyCalcUi, model: Callable) -> None:
         """Controller initializer."""
         self._view = view
+        self._evaluate = model
+
         # Connect signals and slots
         self._connectSignals()
 
+    def _calculateResult(self) -> None:
+        """Evaluate expressions."""
+        result = self._evaluate(expression=self._view.displayText())
+        self._view.setDisplayText(result)
+
     def _buildExpression(self, sub_exp: str) -> None:
         """Build expression."""
+        if self._view.displayText() == self.ERROR_MSG:
+            self._view.clearDisplay()
+
         expression = self._view.displayText() + sub_exp
         self._view.setDisplayText(expression)
 
@@ -107,7 +113,19 @@ class PyCalcCtrl:
             if btnText not in {'=', 'C'}:
                 btn.clicked.connect(partial(self._buildExpression, btnText))
 
+        self._view.buttons['='].clicked.connect(self._calculateResult)
+        self._view.display.returnPressed.connect(self._calculateResult)
         self._view.buttons['C'].clicked.connect(self._view.clearDisplay)
+
+
+def evaluateExpression(expression: expressType) -> str:
+    """Evaluate an expression."""
+    try:
+        result = str(eval(expression, {}, {}))
+    except Exception:
+        result = PyCalcCtrl.ERROR_MSG
+    finally:
+        return result
 
 
 def main() -> None:
@@ -118,7 +136,7 @@ def main() -> None:
     view = PyCalcUi()
     view.show()
     # Create instances of the model and the controller
-    PyCalcCtrl(view=view)
+    PyCalcCtrl(view=view, model=evaluateExpression)
 
     # Execute the calculator's main loop
     sys.exit(pycalc.exec_())
