@@ -9,12 +9,16 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QLineEdit
 
-from typing import Union, Dict, Tuple, Optional, Callable, cast
+from typing import Union, Dict, Tuple, Optional, cast, Protocol
 
 
 # TODO: add ideal gas subwindw: pressure(barr/psi.pa, temp(oC/K), label showing which R, vol(m3, dm3, cm3), moles <- d, mass, mr)
 # TODO: add graph window
 # TODO: add opencv image window
+
+class EvalExpressionCallable(Protocol):
+    """ == Callable[[str], int]"""
+    def __call__(self, expression: str) -> str: ...
 
 
 class idealGas(QMainWindow):
@@ -141,7 +145,7 @@ class PyCalcCtrl:
 
     ERROR_MSG = 'ERROR'
 
-    def __init__(self, view: PyCalcUi, model: Callable[[str], str]) -> None:
+    def __init__(self, view: PyCalcUi, model: EvalExpressionCallable) -> None:
         """Controller initializer."""
         self._view = view
         self._evaluate = model

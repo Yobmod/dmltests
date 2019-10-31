@@ -9,7 +9,7 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2.QtWidgets import QWidget, QGridLayout, QVBoxLayout, QPushButton, QLineEdit, QLabel
 
-from typing import Union, Dict, Tuple, Optional, Callable, cast
+from typing import Union, Dict, Tuple, Optional, cast
 
 
 # TODO: add ideal gas subwindw: pressure(barr/psi.pa, temp(oC/K), label showing which R, vol(m3, dm3, cm3), moles <- d, mass, mr)
@@ -150,6 +150,7 @@ class PyCalcUi(QWidget):
         self.display.returnPressed.connect(self._calculateResult)
         self.buttons['C'].clicked.connect(self.clearDisplay)
 
+
     def _evaluateExpression(self, expression: str) -> str:
         """Evaluate an expression."""
         try:
@@ -158,6 +159,7 @@ class PyCalcUi(QWidget):
             result = PyCalcUi.ERROR_MSG
         finally:
             return result
+
 
 
 def main() -> None:

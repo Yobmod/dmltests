@@ -5,10 +5,10 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget
 from PySide2.QtWidgets import QLabel, QAction, QMessageBox, QCheckBox, QPushButton, QComboBox
 from PySide2.QtWidgets import QCalendarWidget, QProgressBar, QFontDialog, QColorDialog, QStyleFactory
-from PySide2.QtWidgets import QGridLayout, QVBoxLayout
+from PySide2.QtWidgets import QVBoxLayout  # , QGridLayout
 from pycalc import PyCalcUi
 
-from typing import Union
+# from typing import Union
 from typing_extensions import Literal
 
 

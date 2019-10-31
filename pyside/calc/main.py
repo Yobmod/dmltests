@@ -40,10 +40,10 @@ def main() -> None:
     if DEBUG is True:
         prof = start_profiling()
     print("starting...")
-    
+
     import time
     start_time = time.perf_counter()
-    from pathlib import Path
+    # from pathlib import Path
     from pycalc import main
     logger = set_up_logger()
     print(f"Imports done @ {time.perf_counter() - start_time:.2f} s")
