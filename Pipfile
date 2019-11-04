@@ -58,6 +58,7 @@ cytoolz = "*"
 moshmosh-base = "*"
 seaborn = "*"
 pyqtgraph = "*"
+mechanicalsoup = "*"
 
 [requires]
 python_version = "3.7"
