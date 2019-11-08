@@ -4,7 +4,9 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 from typing import Union, List, Any
 from typing_extensions import Literal
-from myTypes import QEvent_
+
+
+class QEvent_(QtCore.QEvent): ...  # Typing
 
 
 AllowedColorType = Literal['aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure',
@@ -184,9 +186,8 @@ class PowerBar(QWidget):
 def main() -> None:
     """Main function."""
     pycalc = QApplication(sys.argv)
-    colors: List[AllowedColorType] = [
-        'aliceblue', 'fuchsia', QtCore.Qt.GlobalColor.yellow,
-        'mediumspringgreen', 'palegoldenrod', 'purple']
+    colors: List[AllowedColorType] = ['aliceblue', 'fuchsia', QtCore.Qt.GlobalColor.yellow,
+                                      'mediumspringgreen', 'palegoldenrod', 'purple']
     calc = PowerBar(colors)
     calc.show()
     sys.exit(pycalc.exec_())
