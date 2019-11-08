@@ -19,6 +19,8 @@ flake8 = "*"
 pdbpp = "*"
 pytype = "*"
 pyinstaller = "*"
+flake8-bugbear = "*"
+flake8-comprehensions = "*"
 
 [packages]
 flask = "*"
