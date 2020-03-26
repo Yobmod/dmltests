@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-DWWVgvFv\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\Users\\Customer\\.virtualenvs\\dmlvis-S9R8jaT6\\Scripts\\python.exe",
     "python.autoComplete.extraPaths": [".", ".\\src", ".\\pyside\\calc", ".\\bsl"],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
