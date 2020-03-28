@@ -1,23 +1,26 @@
 {
-    "python.pythonPath": "C:\\Users\\Customer\\.virtualenvs\\dmlvis-S9R8jaT6\\Scripts\\python.exe",
-    "python.autoComplete.extraPaths": [".", ".\\src", ".\\pyside\\calc", ".\\bsl"],
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": false,
-    "python.linting.enabled": true,
-    "python.linting.mypyEnabled": true,
-    "python.linting.pylamaEnabled": true,
-    "python.linting.flake8Enabled": true,
-
-    "python.jediEnabled": false,
+    "code-runner.executorMap": {
+        "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+        "html": "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
+        "javascript": "node",
+        "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe"
+    },
     "python.analysis.disabled": [
         "inherit-non-class"
     ],
-    
-    "code-runner.executorMap": {
-        "javascript": "node",
-        "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
-        "html": "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
-        "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
-    }
+    "python.autoComplete.extraPaths": [
+        ".",
+        ".\\src",
+        ".\\pyside\\calc",
+        ".\\bsl"
+    ],
+    "python.jediEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylamaEnabled": true,
+    "python.pythonPath": "C:\\Users\\UTGARD2\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\dmlnotebook-nnCWQcWe-py3.7",
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": false
 }

@@ -73,4 +73,4 @@ with open(".vscode/settings.json", "w") as f:
     json.dump(settings, f, sort_keys=True, indent=4)
 
 
-print(json.dumps(settings, sort_keys=True, indent=4))
+# print(json.dumps(settings, sort_keys=True, indent=4))
