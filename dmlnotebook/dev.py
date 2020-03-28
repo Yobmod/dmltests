@@ -1,4 +1,4 @@
-from git import Repo
+from git import Repo, exc
 from pathlib import Path
 import dotenv
 import os
@@ -11,14 +11,20 @@ from datetime import datetime
 # add progressbar from git lib?
 
 cwd = Path.cwd().resolve()
-repo = Repo(cwd)
+try:
+    git_wd = cwd
+    repo = Repo(git_wd)
+except exc.InvalidGitRepositoryError:
+    git_wd = cwd.parent
+    repo = Repo(git_wd)
 assert not repo.bare
-assert repo.working_tree_dir == str(cwd.resolve())
+assert repo.working_tree_dir == str(git_wd.resolve())
 
 dotenv.load_dotenv(cwd / ".env")
 username = os.getenv("GIT_USERNAME") or "DML"
 password = os.getenv("GIT_PASSWORD")  # or None
 
+repo.remotes.origin.pull()
 
 if repo.is_dirty():
     changedFiles = [item.a_path for item in repo.index.diff(None)]
@@ -46,3 +52,28 @@ if update_pending:
         print(f"Pushing changes to: {repo.remotes.origin.url}")
     except Exception:
         raise
+
+
+
+import json
+import subprocess
+from pathlib import Path
+
+venv_path = subprocess.check_output("poetry env info --path".split())
+venv_path = venv_path.decode("UTF-8")
+
+settings = dict()
+
+Path(".vscode").mkdir(parents=True, exist_ok=True)
+Path(".vscode/settings.json").touch()
+
+
+with open(".vscode/settings.json", "r") as f:
+    settings = json.load(f)
+    settings["python.pythonPath"] = venv_path
+
+with open(".vscode/settings.json", "w") as f:
+    json.dump(settings, f, sort_keys=True, indent=4)
+
+
+print(json.dumps(settings, sort_keys=True, indent=4))
