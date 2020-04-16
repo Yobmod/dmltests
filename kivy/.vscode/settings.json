@@ -3,7 +3,7 @@
     "python.autoComplete.extraPaths": [
         ".",
         ".\\src",
-        ".\\tests",
+        ".\\tests"
     ],
     "python.linting.enabled": true,
     "python.linting.mypyEnabled": true,
@@ -15,5 +15,5 @@
     "python.testing.nosetestsEnabled": false,
     "python.formatting.provider": "autopep8",
     "editor.formatOnSave": true,
-    "restructuredtext.confPath": "",
+    "restructuredtext.confPath": ""
 }
