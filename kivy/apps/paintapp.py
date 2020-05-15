@@ -1,4 +1,5 @@
 from __future__ import annotations
+# import kivy
 from kivy.app import App
 from kivy.graphics import Line, Color, Ellipse
 from kivy.uix.gridlayout import GridLayout
@@ -9,20 +10,17 @@ from kivy.uix.widget import Widget
 import dotenv
 import os
 from random import random
-env = dotenv.load_dotenv('../.env')
-KIVY_DATA_DIR = os.environ['KIVY_DATA_DIR'] or './data'
-KIVY_MODULES_DIR = os.environ['KIVY_DATA_DIR'] or './modules'
-import kivy                             # noqa: E402
-kivy.require("1.10.0")
+from kivy.input import MotionEvent
 
-from typing import Any, Dict  # , Union, overload            # noqa: E402
-from kivy.input import MotionEvent      # noqa: E402
+env = dotenv.load_dotenv('../.env')
+KIVY_DATA_DIR = os.environ.get('KIVY_DATA_DIR') or './data'
+# KIVY_MODULES_DIR = os.environ['KIVY_DATA_DIR'] or './modules'
 
 
 class LoginScreen(GridLayout):
     """"""
 
-    def __init__(self, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, **kwargs: object) -> None:
         super(LoginScreen, self).__init__(**kwargs)
         self.cols = 2
 
@@ -81,5 +79,4 @@ class PaintApp(App):
 
 
 if __name__ == "__main__":
-    x = PaintApp()
     PaintApp().run()
