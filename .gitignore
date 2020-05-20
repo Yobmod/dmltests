@@ -4,8 +4,8 @@ pipfile.lock
 poetry.lock
 .ipynb_checkpoints
 
-*.env
 .env
+*.env
 
 dist
 */**/dist
