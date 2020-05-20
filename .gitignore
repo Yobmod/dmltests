@@ -2,7 +2,10 @@ tokens.env
 bsl.env
 pipfile.lock
 poetry.lock
+.ipynb_checkpoints
+
 *.env
+.env
 
 dist
 */**/dist

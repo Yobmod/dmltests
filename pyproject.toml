@@ -49,7 +49,7 @@ gitpython = "*"
 
 [tool.poetry.dev-dependencies]
 # cython = "*"
-gitpython = "*"
+# gitpython = "*"
 mypy = "*"
 pytest = "*"
 pytest-cov = "*"
