@@ -2,6 +2,7 @@ tokens.env
 bsl.env
 pipfile.lock
 poetry.lock
+*.env
 
 dist
 */**/dist
