@@ -19,5 +19,12 @@
         "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
         "html": "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
         "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
-    }
+    },
+    "python.languageServer": "Pylance",
+    "python.analysis.extraPaths": [
+        ".",
+        ".\\src",
+        ".\\pyside\\calc",
+        ".\\bsl"
+    ]
 }

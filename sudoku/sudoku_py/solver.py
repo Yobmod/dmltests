@@ -1,16 +1,16 @@
 from datetime import datetime, timedelta
 import sys
 
-from typing import List, Sequence, Union, Tuple, cast
+from typing import List, Sequence, Tuple, cast
 from typing_extensions import Final, Literal
 
 
 allowedNums = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 sudokuType = Sequence[List[allowedNums]]  # Tuple and therefore sequence does not support index assignment
-
+_: Literal[0] = 0
 
 SIZE: Final[int] = 9
-_: Literal[0] = 0
+
 
 # sudoku problem
 # cells with value 0 are vacant cells
