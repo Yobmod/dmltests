@@ -3,7 +3,8 @@ bsl.env
 pipfile.lock
 poetry.lock
 .ipynb_checkpoints
-
+.venv
+.vscode
 .env
 *.env
 

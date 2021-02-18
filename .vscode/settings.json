@@ -1,30 +1,33 @@
 {
-    "python.pythonPath": "c:\\Users\\Yobmod\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\dmltestys-NGVdMzQR-py3.7\\Scripts\\python.exe",
-    "python.autoComplete.extraPaths": [".", ".\\src", ".\\pyside\\calc", ".\\bsl"],
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": false,
-    "python.linting.enabled": true,
-    "python.linting.mypyEnabled": true,
-    "python.linting.pylamaEnabled": true,
-    "python.linting.flake8Enabled": true,
-
-    "python.jediEnabled": false,
+    "code-runner.executorMap": {
+        "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+        "html": "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
+        "javascript": "node",
+        "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe"
+    },
     "python.analysis.disabled": [
         "inherit-non-class"
     ],
-    
-    "code-runner.executorMap": {
-        "javascript": "node",
-        "python": "C:\\Users\\laventin.LANCS\\.virtualenvs\\dmltests-4uyn6NvJ\\Scripts\\python.exe",
-        "html": "\"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe\"",
-        "c": "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
-    },
-    "python.languageServer": "Pylance",
     "python.analysis.extraPaths": [
         ".",
         ".\\src",
         ".\\pyside\\calc",
         ".\\bsl"
-    ]
+    ],
+    "python.autoComplete.extraPaths": [
+        ".",
+        ".\\src",
+        ".\\pyside\\calc",
+        ".\\bsl"
+    ],
+    "python.jediEnabled": false,
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylamaEnabled": true,
+    "python.pythonPath": "C:\\dev\\dmltests\\.venv\r\n",
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": false
 }
