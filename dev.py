@@ -6,6 +6,8 @@ from git import Repo, exc
 import dotenv
 import os
 from datetime import datetime
+
+from git.diff import _octal_repl
 # import safety
 
 """
@@ -88,6 +90,7 @@ def _intp(mode: int, hex: str, st: int, path: str) -> str:
 print(_intp(1, "es", 2, "Fr"))
 
 def fintp(mode: int, hex: str, st: int, path: str) -> str:
-    return f"{mode}, {hex}, {st}, {path}"
+    assert isinstance(mode, _octal_repl)
+    return f"({mode}, {hex}, {st}, {path})"
 
 print(fintp(1, "es", 2, "Fr"))
