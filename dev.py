@@ -82,5 +82,7 @@ with open(".vscode/settings.json", "w") as f:
 """
 
 
-def _intp(self) -> str:
-    return "(%o, %s, %i, %s)" % (self.mode, self.hexsha, self.stage, self.path)
+def _intp(mode: int, hex: str, st: int, path: str) -> str:
+    return "(%o, %s, %i, %s)" % (mode, hex, st, path)
+
+print(_intp(1, "es", 2, "Fr"))
