@@ -87,7 +87,7 @@ with open(".vscode/settings.json", "w") as f:
 def _intp(mode: int, hex: str, st: int, path: str) -> str:
     return "(%o, %s, %i, %s)" % (mode, hex, st, path)
 
-print(_intp(1, "es", 2, "Fr"))
+print(_intp(9, "es", 2, "Fr"))
 
 def fintp(mode: int, hex: str, st: int, path: str) -> str:
     # assert isinstance(mode, _octal_repl)
