@@ -25,6 +25,8 @@ except exc.InvalidGitRepositoryError:
     git_wd = cwd.parent
     repo = Repo(git_wd)
 assert not repo.bare
+print(type(repo.working_tree_dir))
+print(type(git_wd.resolve()))
 assert repo.working_tree_dir == str(git_wd.resolve())
 
 dotenv.load_dotenv(cwd / ".env")
@@ -61,6 +63,7 @@ if update_pending:
         raise
 
 
+"""
 venv_path_bytes = subprocess.check_output("poetry env info --path".split(), shell=True)
 venv_path = venv_path_bytes.decode("UTF-8")
 
@@ -76,3 +79,8 @@ with open(".vscode/settings.json", "w") as f:
 
 
 # print(json.dumps(settings, sort_keys=True, indent=4))
+"""
+
+
+def _intp(self) -> str:
+    return "(%o, %s, %i, %s)" % (self.mode, self.hexsha, self.stage, self.path)
