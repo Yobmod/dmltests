@@ -91,6 +91,6 @@ print(_intp(1, "es", 2, "Fr"))
 
 def fintp(mode: int, hex: str, st: int, path: str) -> str:
     assert isinstance(mode, _octal_repl)
-    return f"({mode}, {hex}, {st}, {path})"
+    return f"({mode: o}, {hex}, {st}, {path})"
 
 print(fintp(1, "es", 2, "Fr"))
